@@ -1,1 +1,1 @@
-![App Screenshot]([https://example.com/screenshot.png](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZd5wRmBXv8eeqw5OPBjg2CnbVB_hF_N6_LP90dx4jhGmh0Bsr2Ii5DW4&s=10))
+![App Screenshot](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG-phWBJb_pX7cyDGvdTmeB-4T9115e7YcQL3ZnR2-NwHacq1dKY56dHE&s=10)
