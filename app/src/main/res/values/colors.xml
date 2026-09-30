@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Original template colors — required by themes.xml -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Railtap brand colors -->
     <color name="brand">#6557BA</color>
     <color name="brand_light">#7B6ECC</color>
     <color name="brand_dark">#5446A6</color>
     <color name="neutral_subtle">#9CA3AF</color>
     <color name="neutral_border">#E5E7EB</color>
     <color name="neutral_heading">#111827</color>
-    <color name="white">#FFFF</color>
+    <color name="input_bg">#F7F7FA</color>
+
+
+    <color name="card_purple_start">#6557BA</color>
+    <color name="card_purple_end">#4A3D8F</color>
+    <color name="green_line">#3C8F5C</color>
+    <color name="green_line_bg">#DCEFE3</color>
+    <color name="purple_line_bg">#E7E4F7</color>
+    <color name="surface_light">#F7F7FB</color>
+    <color name="bottom_nav_inactive">#9CA3AF</color>
+
+    <color name="bg_avatar">#E2E8F0</color>
 </resources>

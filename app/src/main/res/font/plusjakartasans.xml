@@ -8,4 +8,11 @@
         android:fontStyle="italic"
         android:fontWeight="400"
         android:font="@font/plus_jakarta_sans_italic" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        android:font="@font/plus_jakarta_sans_bold" />
+
+
 </font-family>

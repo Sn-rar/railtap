@@ -1,0 +1,5 @@
+<!-- bg_pill_green.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="20dp" />
+    <solid android:color="@color/green_line_bg" />
+</shape>
