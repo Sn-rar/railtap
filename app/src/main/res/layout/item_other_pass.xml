@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_ticket_card"
+    android:elevation="2dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="20dp">
+
+    <!-- Line Pill (Color and text bound dynamically) -->
+    <TextView
+        android:id="@+id/itemLinePill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pill_green"
+        android:fontFamily="@font/plusjakartasans"
+        android:paddingStart="12dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="4dp"
+        android:text="--"
+        android:textColor="@android:color/white"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Passenger Count Badge -->
+    <TextView
+        android:id="@+id/itemPassengerBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pill_passenger"
+        android:drawableStart="@drawable/ic_person"
+        android:drawablePadding="6dp"
+        android:fontFamily="@font/plusjakartasans"
+        android:letterSpacing="0.05"
+        android:paddingStart="12dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="5dp"
+        android:text="-- PASSENGER"
+        android:textColor="#5E6E82"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:drawableTint="#5E6E82"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Origin Section -->
+    <TextView
+        android:id="@+id/itemOriginLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/plusjakartasans"
+        android:letterSpacing="0.05"
+        android:text="ORIGIN"
+        android:textColor="#94A3B8"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemLinePill" />
+
+    <TextView
+        android:id="@+id/itemOriginStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/plusjakartasans"
+        android:lineSpacingExtra="-2dp"
+        android:text="--"
+        android:textColor="#0B1A30"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemOriginLabel" />
+
+    <!-- Route Arrow -->
+    <ImageView
+        android:id="@+id/itemArrow"
+        android:layout_width="38dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="@id/itemOriginStation"
+        app:layout_constraintEnd_toStartOf="@id/itemDestinationStation"
+        app:layout_constraintStart_toEndOf="@id/itemOriginStation"
+        app:layout_constraintTop_toTopOf="@id/itemOriginStation"
+        app:tint="#00875A" />
+
+    <!-- Destination Section -->
+    <TextView
+        android:id="@+id/itemDestinationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/plusjakartasans"
+        android:letterSpacing="0.05"
+        android:text="DESTINATION"
+        android:textColor="#94A3B8"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/itemOriginLabel" />
+
+    <TextView
+        android:id="@+id/itemDestinationStation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/plusjakartasans"
+        android:text="--"
+        android:textColor="#0B1A30"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemDestinationLabel" />
+
+    <!-- Expiry Label -->
+    <TextView
+        android:id="@+id/itemExpiryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/plusjakartasans"
+        android:text="--"
+        android:textColor="#62718A"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/itemBtnShowQR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/itemBtnShowQR" />
+
+    <!-- Show QR Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/itemBtnShowQR"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#00875A"
+        android:fontFamily="@font/plusjakartasans"
+        android:letterSpacing="0.04"
+        android:paddingStart="16dp"
+        android:paddingEnd="18dp"
+        android:text="SHOW QR"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/ic_qr_code"
+        app:iconGravity="textStart"
+        app:iconPadding="6dp"
+        app:iconSize="16dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemOriginStation" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

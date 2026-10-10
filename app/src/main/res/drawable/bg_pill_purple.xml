@@ -3,4 +3,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="20dp" />
     <solid android:color="@color/purple_line_bg" />
+    <stroke
+        android:width="2dp"
+        android:color="#33705FBF" />
+
 </shape>

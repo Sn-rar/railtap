@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FD">
+
+    <!-- Top App Bar / Header -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="36dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#0B1A30" />
+
+        <TextView
+            android:id="@+id/headerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/plusjakartasans"
+            android:text="TURNSTILE PASS SCANNER"
+            android:textColor="#0B1A30"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scrollable Body Content -->
+    <ScrollView
+        android:id="@+id/scrollBody"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/bottomBarContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Mini Route Card -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/miniRouteCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_qr_mini_card"
+                android:paddingStart="18dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="18dp"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/lineBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:paddingStart="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="4dp"
+                    android:text="--"
+                    android:textColor="@android:color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/refNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="Ref # --"
+                    android:textColor="#62718A"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/lineBadge"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/lineBadge" />
+
+                <!-- Origin -->
+                <TextView
+                    android:id="@+id/lblOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:letterSpacing="0.04"
+                    android:text="ORIGIN"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lineBadge" />
+
+                <TextView
+                    android:id="@+id/tvOrigin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#0B1A30"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblOrigin" />
+
+                <ImageView
+                    android:id="@+id/routeArrow"
+                    android:layout_width="28dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="@id/tvOrigin"
+                    app:layout_constraintEnd_toStartOf="@id/tvDestination"
+                    app:layout_constraintStart_toEndOf="@id/tvOrigin"
+                    app:layout_constraintTop_toTopOf="@id/tvOrigin" />
+
+                <!-- Destination -->
+                <TextView
+                    android:id="@+id/lblDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:letterSpacing="0.04"
+                    android:text="DESTINATION"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/lblOrigin" />
+
+                <TextView
+                    android:id="@+id/tvDestination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#0B1A30"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/lblDestination" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Instructional Hint -->
+            <TextView
+                android:id="@+id/tvScannerHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:gravity="center"
+                android:text="Scan each QR pass at turnstile gate reader one by one."
+                android:textColor="#62718A"
+                android:textSize="13sp" />
+
+            <!-- Dynamic Passenger Selector Container -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:overScrollMode="never"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/passengerTabsContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <!-- Main QR Ticket Card -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ticketCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_qr_main_ticket"
+                android:elevation="2dp"
+                android:paddingBottom="20dp">
+
+                <!-- Header inside Card -->
+                <TextView
+                    android:id="@+id/cardPassengerTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#0B1A30"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/cardFareType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#62718A"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toStartOf="@id/cardPassengerTitle"
+                    app:layout_constraintTop_toBottomOf="@id/cardPassengerTitle" />
+
+                <TextView
+                    android:id="@+id/cardFareBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:paddingStart="14dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="5dp"
+                    android:text="--"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/cardFareType"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cardPassengerTitle" />
+
+                <!-- Top Cutout Divider -->
+                <View
+                    android:id="@+id/cutoutLeftTop"
+                    android:layout_width="14dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_cutout_left"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cardFareType" />
+
+                <View
+                    android:id="@+id/dashedDividerTop"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/bg_dashed_line"
+                    app:layout_constraintBottom_toBottomOf="@id/cutoutLeftTop"
+                    app:layout_constraintEnd_toStartOf="@id/cutoutRightTop"
+                    app:layout_constraintStart_toEndOf="@id/cutoutLeftTop"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeftTop" />
+
+                <View
+                    android:id="@+id/cutoutRightTop"
+                    android:layout_width="14dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/bg_cutout_right"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeftTop" />
+
+                <!-- QR Scanner Area -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/qrScannerArea"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cutoutLeftTop">
+
+                    <ImageView
+                        android:id="@+id/cornerTopLeft"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_corner_top_left"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/cornerTopRight"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_corner_top_right"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/cornerBottomLeft"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_corner_bottom_left"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/cornerBottomRight"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_corner_bottom_right"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/imgQRCode"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp"
+                        android:contentDescription="QR Code"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Glass Target Instruction -->
+                <TextView
+                    android:id="@+id/tvTargetInstruction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:drawableStart="@drawable/ic_wireless"
+                    android:drawablePadding="6dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="Hold ~5 inches from glass scanner target"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/qrScannerArea" />
+
+                <!-- Bottom Cutout Divider -->
+                <View
+                    android:id="@+id/cutoutLeftBottom"
+                    android:layout_width="14dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_cutout_left"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvTargetInstruction" />
+
+                <View
+                    android:id="@+id/dashedDividerBottom"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/bg_dashed_line"
+                    app:layout_constraintBottom_toBottomOf="@id/cutoutLeftBottom"
+                    app:layout_constraintEnd_toStartOf="@id/cutoutRightBottom"
+                    app:layout_constraintStart_toEndOf="@id/cutoutLeftBottom"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeftBottom" />
+
+                <View
+                    android:id="@+id/cutoutRightBottom"
+                    android:layout_width="14dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/bg_cutout_right"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeftBottom" />
+
+                <!-- Bottom Ticket Details -->
+                <TextView
+                    android:id="@+id/lblTrainFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:letterSpacing="0.04"
+                    android:text="TRAIN FARE:"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cutoutLeftBottom" />
+
+                <TextView
+                    android:id="@+id/tvTrainFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#0B1A30"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/lblTrainFare"
+                    app:layout_constraintTop_toBottomOf="@id/lblTrainFare" />
+
+                <TextView
+                    android:id="@+id/lblValidUntil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:letterSpacing="0.04"
+                    android:text="VALID UNTIL:"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/lblTrainFare" />
+
+                <TextView
+                    android:id="@+id/tvValidUntil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="--"
+                    android:textColor="#0B1A30"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@id/lblValidUntil"
+                    app:layout_constraintTop_toBottomOf="@id/lblValidUntil" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Action Button Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBarContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNextPassenger"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:fontFamily="@font/plusjakartasans"
+            android:letterSpacing="0.03"
+            android:text="--"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
