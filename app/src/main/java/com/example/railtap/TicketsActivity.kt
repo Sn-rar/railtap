@@ -1,4 +1,4 @@
-package com.example.transitapp
+package com.example.railtap
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -67,6 +67,8 @@ class TicketsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tickets)
 
+        setupBottomNav(this, NavTab.TICKETS)
+
         val rvOther = findViewById<RecyclerView>(R.id.rvOtherPasses)
         rvOther.layoutManager = LinearLayoutManager(this)
 
@@ -97,16 +99,25 @@ class TicketsActivity : AppCompatActivity() {
 
         // Setup empty state button
         findViewById<View>(R.id.btnBuyTicketEmpty)?.setOnClickListener {
-            // Action to navigate to booking screen
+            startActivity(android.content.Intent(this, BookingActivity::class.java))
         }
 
         fetchPassesFromDatabase()
     }
 
     private fun fetchPassesFromDatabase() {
+        // Database not connected yet, so there are no passes (shows the empty "No Active Tickets" card).
+        // To preview the screen with fake passes, change this to true.
+        val useSampleData = false
+        if (!useSampleData) {
+            allPasses = mutableListOf()
+            refreshUI()
+            return
+        }
+
         val now = System.currentTimeMillis()
 
-        // Replace this mock list with your database query or network response
+        // Sample passes for testing only. Replace with your database query later.
         allPasses = mutableListOf(
             TransitPass(
                 id = "1",

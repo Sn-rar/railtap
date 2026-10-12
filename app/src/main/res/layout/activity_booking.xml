@@ -601,7 +601,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="14dp"
                         android:fontFamily="@font/plusjakartasans"
-                        android:text="Maya Wallet"
+                        android:text="PayPal"
                         android:textColor="#0B1A30"
                         android:textSize="14sp"
                         android:textStyle="bold"

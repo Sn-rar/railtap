@@ -148,7 +148,7 @@
                         android:fontFamily="@font/plus_jakarta_sans_extrabold"
                         android:text="--"
                         android:textColor="@android:color/white"
-                        android:textSize="26sp"
+                        android:textSize="26sp" />
 
                 </LinearLayout>
 
@@ -379,6 +379,10 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+            android:id="@+id/navHome"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -403,6 +407,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navTickets"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -426,6 +434,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navLines"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -449,6 +461,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/navAccount"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
