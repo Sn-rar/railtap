@@ -6,24 +6,33 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.Email
+import kotlinx.coroutines.launch
 
 class LogInActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
+    private val supabase = SupabaseManager.client
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        auth = FirebaseAuth.getInstance()
 
         // 1. Find the views by their IDs from the XML layout
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signInButton)
         val signUpLink = findViewById<TextView>(R.id.signUpLink)
+
+        // Skip the login screen if a saved session already exists
+        lifecycleScope.launch {
+            supabase.auth.awaitInitialization()
+            if (supabase.auth.currentSessionOrNull() != null) {
+                goToDashboard()
+            }
+        }
 
         // 2. Set click listener for the Sign In button
         signInButton.setOnClickListener {
@@ -35,22 +44,35 @@ class LogInActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, DashboardActivity::class.java)
-                    startActivity(intent)
-                    finish()
+            signInButton.isEnabled = false
+
+            lifecycleScope.launch {
+                try {
+                    supabase.auth.signInWith(Email) {
+                        this.email = email
+                        this.password = password
+                    }
+                    Toast.makeText(this@LogInActivity, "Welcome back!", Toast.LENGTH_SHORT).show()
+                    goToDashboard()
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@LogInActivity,
+                        "Sign in failed: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    signInButton.isEnabled = true
                 }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Sign in failed: ${e.message}", Toast.LENGTH_LONG).show()
-                }
+            }
         }
 
         // 3. Set click listener for the Sign Up text at the bottom
         signUpLink.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
+    }
+
+    private fun goToDashboard() {
+        startActivity(Intent(this, DashboardActivity::class.java))
+        finish()
     }
 }

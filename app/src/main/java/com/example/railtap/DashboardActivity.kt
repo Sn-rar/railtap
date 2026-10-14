@@ -4,12 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-
+import androidx.lifecycle.lifecycleScope
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.launch
 
 class DashboardActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
+    private val supabase = SupabaseManager.client
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +21,15 @@ class DashboardActivity : AppCompatActivity() {
         // "Buy Ticket" buttons open the booking screen for that line
         findViewById<View>(R.id.greenLineButton).setOnClickListener { openBooking("LRT-1") }
         findViewById<View>(R.id.purpleLineButton).setOnClickListener { openBooking("LRT-2") }
+
+        // Not signed in -> back to login
+        lifecycleScope.launch {
+            supabase.auth.awaitInitialization()
+            if (supabase.auth.currentSessionOrNull() == null) {
+                startActivity(Intent(this@DashboardActivity, LogInActivity::class.java))
+                finish()
+            }
+        }
     }
 
     private fun openBooking(line: String) {
@@ -27,6 +37,4 @@ class DashboardActivity : AppCompatActivity() {
         intent.putExtra(BookingActivity.EXTRA_LINE, line)
         startActivity(intent)
     }
-
-
 }
