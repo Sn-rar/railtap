@@ -16,8 +16,6 @@ import kotlinx.serialization.json.put
 
 class SignUpActivity : AppCompatActivity() {
 
-    private val supabase = SupabaseManager.client
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
@@ -30,12 +28,12 @@ class SignUpActivity : AppCompatActivity() {
         val confirmPasswordInput = findViewById<TextInputEditText>(R.id.confirmPasswordInput)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
 
-        // the back button
+        // Back button
         backButton.setOnClickListener {
             startActivity(Intent(this, LogInActivity::class.java))
         }
 
-        // the signup logic
+        // Sign up logic
         signUpButton.setOnClickListener {
             val fullName = fullNameInput.text.toString().trim()
             val email = emailInput.text.toString().trim()
@@ -61,21 +59,22 @@ class SignUpActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // The full name is stored as user metadata on the auth user
-                    // (read it later with supabase.auth.currentUserOrNull()?.userMetadata).
-                    supabase.auth.signUpWith(Email) {
+                    // Create the user and store the full name in their metadata
+                    SupabaseClient.client.auth.signUpWith(Email) {
                         this.email = email
                         this.password = password
-                        data = buildJsonObject { put("full_name", fullName) }
+                        data = buildJsonObject {
+                            put("full_name", fullName)
+                        }
                     }
 
-                    if (supabase.auth.currentSessionOrNull() != null) {
-                        // Email confirmation is OFF: user is signed in right away
+                    if (SupabaseClient.client.auth.currentSessionOrNull() != null) {
+                        // Email confirmation is OFF: the user is already signed in
                         Toast.makeText(this@SignUpActivity, "Account created!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this@SignUpActivity, DashboardActivity::class.java))
                         finish()
                     } else {
-                        // Email confirmation is ON: user must confirm before signing in
+                        // Email confirmation is ON: user must verify before signing in
                         Toast.makeText(
                             this@SignUpActivity,
                             "Account created! Check your email to confirm, then sign in.",

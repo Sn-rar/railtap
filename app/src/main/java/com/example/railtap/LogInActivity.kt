@@ -14,8 +14,6 @@ import kotlinx.coroutines.launch
 
 class LogInActivity : AppCompatActivity() {
 
-    private val supabase = SupabaseManager.client
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -25,14 +23,6 @@ class LogInActivity : AppCompatActivity() {
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signInButton)
         val signUpLink = findViewById<TextView>(R.id.signUpLink)
-
-        // Skip the login screen if a saved session already exists
-        lifecycleScope.launch {
-            supabase.auth.awaitInitialization()
-            if (supabase.auth.currentSessionOrNull() != null) {
-                goToDashboard()
-            }
-        }
 
         // 2. Set click listener for the Sign In button
         signInButton.setOnClickListener {
@@ -48,12 +38,13 @@ class LogInActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    supabase.auth.signInWith(Email) {
+                    SupabaseClient.client.auth.signInWith(Email) {
                         this.email = email
                         this.password = password
                     }
                     Toast.makeText(this@LogInActivity, "Welcome back!", Toast.LENGTH_SHORT).show()
-                    goToDashboard()
+                    startActivity(Intent(this@LogInActivity, DashboardActivity::class.java))
+                    finish()
                 } catch (e: Exception) {
                     Toast.makeText(
                         this@LogInActivity,
@@ -69,10 +60,5 @@ class LogInActivity : AppCompatActivity() {
         signUpLink.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
-    }
-
-    private fun goToDashboard() {
-        startActivity(Intent(this, DashboardActivity::class.java))
-        finish()
     }
 }
