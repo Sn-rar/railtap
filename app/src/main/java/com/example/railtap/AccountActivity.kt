@@ -1,6 +1,9 @@
 package com.example.railtap
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -16,23 +19,28 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
+import java.io.ByteArrayOutputStream
 
 class AccountActivity : AppCompatActivity() {
+
+    private companion object {
+        const val AVATAR_BUCKET = "avatars"
+        const val AVATAR_FILE = "avatar.jpg"
+        const val AVATAR_MAX_SIZE = 512 // px, longest side
+    }
 
     // Photo picker for the avatar
     private val pickPhoto =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                findViewById<ImageView>(R.id.ivAvatar).apply {
-                    setPadding(0, 0, 0, 0)
-                    imageTintList = null
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                    clipToOutline = true
-                    setImageURI(uri)
-                }
-            }
+            if (uri != null) uploadAvatar(uri)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +50,7 @@ class AccountActivity : AppCompatActivity() {
 
         applyWindowInsets()
         bindUser()
+        loadAvatar()
         setupMenu()
         setupBottomNav(this, NavTab.ACCOUNT)
     }
@@ -77,6 +86,106 @@ class AccountActivity : AppCompatActivity() {
             )
         }
     }
+
+    // ---------- Profile picture ----------
+
+    /** Shows a bitmap in the avatar circle. */
+    private fun showAvatar(bitmap: Bitmap) {
+        findViewById<ImageView>(R.id.ivAvatar).apply {
+            setPadding(0, 0, 0, 0)
+            imageTintList = null
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            clipToOutline = true
+            setImageBitmap(bitmap)
+        }
+    }
+
+    /** Loads the saved avatar (if any) when the screen opens. */
+    private fun loadAvatar() {
+        lifecycleScope.launch {
+            try {
+                val path = SupabaseClient.client.postgrest
+                    .rpc("get_my_avatar_path")
+                    .decodeAsOrNull<String>()
+                if (path.isNullOrBlank()) return@launch
+
+                val bytes = SupabaseClient.client.storage
+                    .from(AVATAR_BUCKET)
+                    .downloadAuthenticated(path)
+
+                val bitmap = withContext(Dispatchers.IO) {
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                }
+                if (bitmap != null) showAvatar(bitmap)
+            } catch (e: Exception) {
+                // Keep the default avatar if loading fails
+            }
+        }
+    }
+
+    /** Resizes, uploads to Storage, then saves the path through the RPC. */
+    private fun uploadAvatar(uri: Uri) {
+        val userId = SupabaseClient.client.auth.currentUserOrNull()?.id
+        if (userId == null) {
+            toast("Please log in again")
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val bitmap = withContext(Dispatchers.IO) { decodeScaled(uri) }
+                if (bitmap == null) {
+                    toast("Couldn't read that image")
+                    return@launch
+                }
+
+                // Show it right away; the upload continues in the background
+                showAvatar(bitmap)
+
+                val bytes = withContext(Dispatchers.IO) {
+                    ByteArrayOutputStream().use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
+                        out.toByteArray()
+                    }
+                }
+
+                val path = "$userId/$AVATAR_FILE"
+                SupabaseClient.client.storage
+                    .from(AVATAR_BUCKET)
+                    .upload(path, bytes) { upsert = true }
+
+                SupabaseClient.client.postgrest.rpc(
+                    "set_avatar",
+                    buildJsonObject { put("p_path", path) }
+                )
+
+                toast("Profile photo updated")
+            } catch (e: Exception) {
+                toast("Upload failed. Please try again.")
+            }
+        }
+    }
+
+    /** Decodes the picked image, scaled down so the longest side is AVATAR_MAX_SIZE. */
+    private fun decodeScaled(uri: Uri): Bitmap? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, bounds)
+        }
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        var sample = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= AVATAR_MAX_SIZE) {
+            sample *= 2
+        }
+
+        val opts = BitmapFactory.Options().apply { inSampleSize = sample }
+        return contentResolver.openInputStream(uri)?.use {
+            BitmapFactory.decodeStream(it, null, opts)
+        }
+    }
+
+    // ---------- Menu / logout ----------
 
     private fun setupMenu() {
         findViewById<View>(R.id.menuAbout).setOnClickListener {
