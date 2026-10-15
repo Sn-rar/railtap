@@ -1,7 +1,15 @@
+import java.util.Properties
+
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
+}
+
+// Reads the PayPal sandbox keys from local.properties (not uploaded to GitHub)
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
@@ -19,6 +27,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "PAYPAL_CLIENT_ID", "\"${localProps.getProperty("PAYPAL_CLIENT_ID", "")}\"")
+        buildConfigField("String", "PAYPAL_SECRET", "\"${localProps.getProperty("PAYPAL_SECRET", "")}\"")
     }
 
     buildTypes {
@@ -29,6 +40,9 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -41,6 +55,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")   // web requests to PayPal
+    implementation("androidx.browser:browser:1.8.0")       // opens PayPal in a browser tab
     implementation("androidx.recyclerview:recyclerview:1.4.0")
 
     // Lifecycle

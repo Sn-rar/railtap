@@ -1,14 +1,19 @@
 package com.example.railtap
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
@@ -45,6 +50,7 @@ class BookingActivity : AppCompatActivity() {
     private var countStudent = 0
     private var countSenior = 0
     private var isSubmitting = false
+    private var pendingBooking: BookingResult? = null // booking waiting for PayPal
 
     // ---- Views ----
     private val tvOrigin by lazy { findViewById<TextView>(R.id.tvBookingOrigin) }
@@ -343,18 +349,79 @@ class BookingActivity : AppCompatActivity() {
 
     /**
      * A pending transaction, its tickets, and a pending PayPal payment now exist.
-     * TODO: launch your PayPal checkout here, then mark the payment/transaction
-     *       'paid' from a trusted backend (e.g. a Supabase Edge Function that
-     *       verifies the PayPal order) and set tickets live.
+     * Create a PayPal (sandbox) order for the server's total and open it in a browser tab.
+     * PayPal then sends the user back to onNewIntent() below.
      */
-    private fun openPayment(result: BookingResult) {
-        toast("Booking ${result.referenceNo} created")
-        // Example once you have a PaymentActivity:
-        // startActivity(Intent(this, PaymentActivity::class.java).apply {
-        //     putExtra(EXTRA_TRANSACTION_ID, result.transactionId)
-        //     putExtra(EXTRA_REFERENCE_NO, result.referenceNo)
-        //     putExtra(EXTRA_TOTAL, result.totalAmount)
-        // })
+    private suspend fun openPayment(result: BookingResult) {
+        pendingBooking = result
+        // PayPal wants the amount as text with 2 decimals, e.g. "45.00"
+        val amount = BigDecimal.valueOf(result.totalAmount)
+            .setScale(2, RoundingMode.HALF_UP).toPlainString()
+
+        val approveUrl = withContext(Dispatchers.IO) {   // network call, off the main thread
+            PayPalHelper.createOrder(amount, result.referenceNo)
+        }
+        CustomTabsIntent.Builder().build().launchUrl(this, Uri.parse(approveUrl))
+    }
+
+    /**
+     * PayPal sends the user back here with railtap://paypal/return?token=ORDER_ID
+     * (or railtap://paypal/cancel). Works because of the intent-filter and
+     * launchMode="singleTop" in AndroidManifest.xml.
+     */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val uri = intent.data ?: return
+
+        if (uri.path == "/cancel") {
+            toast("Payment cancelled")
+            return
+        }
+        val orderId = uri.getQueryParameter("token") ?: return // PayPal's order ID
+
+        isSubmitting = true
+        btnProceed.text = "Confirming payment…"
+        renderAll()
+
+        lifecycleScope.launch {
+            try {
+                val status = withContext(Dispatchers.IO) { PayPalHelper.captureOrder(orderId) }
+                if (status == "COMPLETED") {
+                    val booking = pendingBooking
+                    if (booking != null) {
+                        // Mark the booking as paid in Supabase
+                        try {
+                            repo.markBookingPaid(booking.transactionId, orderId)
+                        } catch (e: Exception) {
+                            // PayPal already took the money, so still show the receipt,
+                            // but tell the user the booking couldn't be updated.
+                            toast("Paid, but couldn't update booking: ${e.message}")
+                        }
+
+                        ReceiptActivity.open(
+                            from = this@BookingActivity,
+                            total = booking.totalAmount,
+                            lineCode = lineCode,
+                            origin = origin?.name ?: "--",
+                            destination = destination?.name ?: "--",
+                            referenceNo = booking.referenceNo
+                        )
+                        finish() // so "back" from the receipt doesn't return to booking
+                    } else {
+                        toast("Payment successful!")
+                    }
+                } else {
+                    toast("Payment status: $status")
+                }
+            } catch (e: Exception) {
+                toast("Payment failed: ${e.message}")
+            } finally {
+                isSubmitting = false
+                btnProceed.text = "Proceed to Payment  →"
+                renderAll()
+            }
+        }
     }
 
     private fun toast(msg: String) =

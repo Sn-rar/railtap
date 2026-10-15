@@ -35,8 +35,21 @@
             android:name=".TicketsActivity"
             android:exported="false" />
 
+        <!-- PayPal sends the user back here via railtap://paypal/return or /cancel -->
         <activity
             android:name=".BookingActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="railtap" android:host="paypal" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ReceiptActivity"
             android:exported="false" />
 
     </application>

@@ -123,4 +123,19 @@ class BookingRepository(
                 put("p_senior", senior)
             }
         ).decodeSingle<BookingResult>()
+
+    /**
+     * Marks a booking as paid after PayPal says COMPLETED.
+     * Sets transaction + payment status to 'paid', saves the PayPal order ID,
+     * and starts the 24-hour ticket validity from now.
+     */
+    suspend fun markBookingPaid(transactionId: Int, paypalOrderId: String) {
+        client.postgrest.rpc(
+            "mark_booking_paid",
+            buildJsonObject {
+                put("p_transaction_id", transactionId)
+                put("p_paypal_order_id", paypalOrderId)
+            }
+        )
+    }
 }
