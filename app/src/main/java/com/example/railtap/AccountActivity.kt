@@ -198,8 +198,7 @@ class AccountActivity : AppCompatActivity() {
             startActivity(Intent(this, TermsActivity::class.java))
         }
         findViewById<View>(R.id.menuContact).setOnClickListener {
-            // startActivity(Intent(this, ContactUsActivity::class.java))
-            toast("Contact Us")
+            startActivity(Intent(this, ContactUsActivity::class.java))
         }
         findViewById<View>(R.id.menuLogout).setOnClickListener {
             confirmLogout()
