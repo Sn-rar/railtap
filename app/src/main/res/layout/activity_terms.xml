@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_light">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_legal_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/legalScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="24dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="32dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="Terms and Conditions"
+                android:textColor="@color/neutral_heading"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_calendar_today"
+                    app:tint="@color/brand" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="Effective Date: October 15, 2026"
+                    android:textColor="@color/brand"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/LegalBody"
+                android:layout_marginTop="16dp"
+                android:text="Welcome to RailTap. These Terms and Conditions govern your access to and use of the RailTap application, which is designed to support NFC and QR code-based commuting transactions for LRT-1 and LRT-2." />
+
+            <TextView
+                style="@style/LegalBody"
+                android:text="By accessing or using RailTap, you agree to these Terms and Conditions. If you do not agree, please discontinue using the application." />
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 1 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="1. About RailTap" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap is a digital commuting application designed to support transit-related functions, including fare information, QR code generation, NFC-based interactions, and payment transactions through supported methods." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="The availability of specific features depends on the application's implementation and the services integrated with it." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Unless expressly authorized through a formal agreement, RailTap is not an official application of, nor is it endorsed by, the Light Rail Transit Authority (LRTA), Light Rail Manila Corporation (LRMC), or any government transportation agency." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 2 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="2. Eligibility and User Responsibilities" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="By using RailTap, you agree to:" />
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Provide accurate information when required." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Use the application only for lawful and authorized purposes." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Keep your device and any account credentials secure, if applicable." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Avoid manipulating, duplicating, or misusing QR codes, NFC functions, or transaction records." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Avoid attempting to access systems, data, or services without authorization." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Report suspected errors, unauthorized transactions, or security issues to the RailTap team." />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users are responsible for activities performed through their devices and accounts, to the extent permitted by applicable law." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 3 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="3. NFC and QR Code Transactions" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap may provide NFC and QR code functionality to facilitate supported commuting transactions." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users must follow the instructions displayed in the application and use compatible devices, scanners, or authorized equipment." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="QR codes and NFC functions may be subject to technical limitations, device compatibility, connectivity requirements, and validation procedures. A generated QR code or successful NFC interaction does not, by itself, guarantee that a fare transaction has been accepted by a transit operator." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users should follow the applicable station rules and instructions from authorized transit personnel." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 4 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="4. Fares and Payments" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Fare amounts displayed in RailTap are subject to the applicable fare rules and official transit policies." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Where supported, payments may be processed through integrated third-party payment services. Payment confirmation, processing times, reversals, refunds, and disputes may be subject to the applicable payment provider's terms." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users should verify transaction details before confirming a payment. If a payment is deducted but the transaction status is unclear, users should retain the transaction reference and contact the RailTap team for assistance." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap does not guarantee uninterrupted payment processing or the immediate resolution of transactions affected by third-party systems." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 5 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="5. Transaction Records" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap may display transaction information, including station selections, fare amounts, payment statuses, and transaction references." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users should review their transaction records and promptly report discrepancies. Transaction records displayed in the application may be subject to synchronization delays, technical errors, or verification by the relevant payment provider." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 6 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="6. Acceptable Use" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users must not:" />
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Use RailTap to commit fraud or evade lawful fare payment." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Forge, duplicate, tamper with, or misuse transaction credentials." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Reverse-engineer, disrupt, or attempt to compromise the application or its systems." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Submit malicious content or interfere with other users' access." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletText"
+                        android:text="Use the application in violation of applicable laws or transit regulations." />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap may restrict access to affected features when necessary to investigate suspected misuse or protect the application, subject to applicable law." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 7 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="7. Service Availability" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap is provided subject to technical availability. The application may experience interruptions due to maintenance, connectivity issues, device limitations, third-party services, or circumstances beyond the team's control." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap does not guarantee uninterrupted or error-free operation and may modify, suspend, or discontinue features as necessary." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 8 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="8. Third-Party Services" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap may integrate with external database providers, payment services, or other third-party platforms. These services may have separate terms and privacy policies." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap is not responsible for the independent operation of third-party services, except where responsibility cannot be excluded under applicable law." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 9 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="9. Intellectual Property" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Unless otherwise indicated, the RailTap name, branding, interface designs, original content, and application materials belong to their respective owners." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Users may not reproduce, distribute, modify, or commercially exploit protected materials without appropriate authorization, except as permitted by law." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Third-party names, logos, and trademarks remain the property of their respective owners." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 10 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="10. Limitation of Liability" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="To the extent permitted by applicable law, RailTap and its development team are not liable for losses resulting from interruptions, incompatible devices, inaccurate information caused by external sources, payment provider outages, or unauthorized use of a device by another person." />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Nothing in these Terms excludes or limits liability that cannot lawfully be excluded or limited under applicable law." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 11 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="11. Privacy" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="Your use of RailTap is also subject to the RailTap Privacy Policy, which explains how information may be collected, used, stored, and protected." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 12 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="12. Changes to These Terms" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="RailTap may revise these Terms and Conditions as the application evolves. Updated terms will be posted on this page with a revised effective date when appropriate. Continued use after changes take effect constitutes acceptance where legally valid." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 13 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="13. Governing Law" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="These Terms and Conditions are intended to be governed by the laws of the Republic of the Philippines, subject to applicable legal requirements." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <!-- 14 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitleBrand"
+                    android:text="14. Contact Us" />
+
+                <TextView
+                    style="@style/LegalBody"
+                    android:text="If you have questions about these Terms and Conditions, please contact the RailTap team through the Contact Us section of this website." />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

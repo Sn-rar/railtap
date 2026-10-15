@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_light">
+
+    <!-- Sticky Header (Outside ScrollView) -->
+    <FrameLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_light"
+        android:elevation="4dp"
+        android:paddingTop="@dimen/screen_padding"
+        android:paddingBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/plus_jakarta_sans_extrabold"
+            android:letterSpacing="0.02"
+            android:text="ACCOUNT"
+            android:textColor="@color/neutral_heading"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/accountScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="16dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="@dimen/screen_padding"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Profile Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_transport_card"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <FrameLayout
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:layout_marginBottom="12dp">
+
+                    <ImageView
+                        android:id="@+id/ivAvatar"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:background="@drawable/bg_avatar"
+                        android:contentDescription="Profile photo"
+                        android:padding="22dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_person"
+                        app:tint="@color/neutral_subtle" />
+
+                    <ImageButton
+                        android:id="@+id/btnChangePhoto"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_camera_badge"
+                        android:contentDescription="Change profile photo"
+                        android:padding="7dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_photo_camera"
+                        app:tint="@android:color/white" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:letterSpacing="0.1"
+                    android:text="HELLO"
+                    android:textColor="@color/neutral_subtle"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                    android:text="RYAN BUTALID!"
+                    android:textColor="@color/neutral_heading"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Settings Menu Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_transport_card"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:id="@+id/menuAbout"
+                    style="@style/AccountMenuRow">
+
+                    <ImageView
+                        style="@style/AccountMenuIcon"
+                        android:src="@drawable/ic_info"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        style="@style/AccountMenuLabel"
+                        android:text="About RailTap" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menuPrivacy"
+                    style="@style/AccountMenuRow">
+
+                    <ImageView
+                        style="@style/AccountMenuIcon"
+                        android:src="@drawable/ic_lock"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        style="@style/AccountMenuLabel"
+                        android:text="Privacy Policy" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menuTerms"
+                    style="@style/AccountMenuRow">
+
+                    <ImageView
+                        style="@style/AccountMenuIcon"
+                        android:src="@drawable/ic_article"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        style="@style/AccountMenuLabel"
+                        android:text="Terms and Conditions" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menuContact"
+                    style="@style/AccountMenuRow">
+
+                    <ImageView
+                        style="@style/AccountMenuIcon"
+                        android:src="@drawable/ic_call"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        style="@style/AccountMenuLabel"
+                        android:text="Contact Us" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/account_divider" />
+
+                <LinearLayout
+                    android:id="@+id/menuLogout"
+                    style="@style/AccountMenuRow">
+
+                    <ImageView
+                        style="@style/AccountMenuIcon"
+                        android:src="@drawable/ic_logout"
+                        app:tint="@color/logout_red" /> [
+
+                    <TextView
+                        style="@style/AccountMenuLabel"
+                        android:text="Logout"
+                        android:textColor="@color/logout_red" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Build info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_tram"
+                    app:tint="@color/neutral_subtle" />
+
+                <TextView
+                    android:id="@+id/tvBuildInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="RailTap Transit v2.4.0 (Build 382)"
+                    android:textColor="@color/neutral_subtle"
+                    android:textSize="11.5sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="12dp"
+        android:minHeight="72dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_home_unactive"
+                app:tint="@color/bottom_nav_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:maxLines="1"
+                android:text="Home"
+                android:textColor="@color/bottom_nav_inactive"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navTickets"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_tickets_unactive"
+                app:tint="@color/bottom_nav_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:maxLines="1"
+                android:text="Tickets"
+                android:textColor="@color/bottom_nav_inactive"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navLines"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_lines_unactive"
+                app:tint="@color/bottom_nav_inactive" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:maxLines="1"
+                android:text="Lines"
+                android:textColor="@color/bottom_nav_inactive"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Active tab -->
+        <LinearLayout
+            android:id="@+id/navAccount"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_person"
+                app:tint="@color/brand" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:maxLines="1"
+                android:text="Account"
+                android:textColor="@color/brand"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
