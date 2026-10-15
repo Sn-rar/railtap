@@ -11,6 +11,7 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         setupBottomNav(this, NavTab.HOME)
 

@@ -19,6 +19,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
 
@@ -30,7 +31,7 @@ class SignUpActivity : AppCompatActivity() {
 
         // Back button
         backButton.setOnClickListener {
-            startActivity(Intent(this, LogInActivity::class.java))
+            finish() // the Login screen is already behind this one
         }
 
         // Sign up logic

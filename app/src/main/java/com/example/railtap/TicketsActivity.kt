@@ -66,6 +66,7 @@ class TicketsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tickets)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         setupBottomNav(this, NavTab.TICKETS)
 
@@ -99,7 +100,9 @@ class TicketsActivity : AppCompatActivity() {
 
         // Setup empty state button
         findViewById<View>(R.id.btnBuyTicketEmpty)?.setOnClickListener {
-            startActivity(android.content.Intent(this, BookingActivity::class.java))
+            // Booking needs a line (LRT-1 / LRT-2), so go to Home to pick one
+            startActivity(android.content.Intent(this, DashboardActivity::class.java)
+                .addFlags(android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
         }
 
         fetchPassesFromDatabase()

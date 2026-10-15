@@ -59,6 +59,7 @@ class ReceiptActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receipt)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         // ---- Read the booking details ----
         val total = intent.getDoubleExtra(EXTRA_TOTAL, 0.0)

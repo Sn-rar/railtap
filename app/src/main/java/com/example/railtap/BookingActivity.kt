@@ -77,6 +77,7 @@ class BookingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_booking)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         val line = intent.getStringExtra(EXTRA_LINE)
         findViewById<TextView>(R.id.tvToolbarTitle).text = when (line) {

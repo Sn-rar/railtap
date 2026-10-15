@@ -10,6 +10,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, LogInActivity::class.java))

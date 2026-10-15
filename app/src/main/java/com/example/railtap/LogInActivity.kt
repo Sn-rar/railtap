@@ -17,6 +17,7 @@ class LogInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         // 1. Find the views by their IDs from the XML layout
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)

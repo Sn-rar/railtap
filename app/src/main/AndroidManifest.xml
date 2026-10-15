@@ -52,5 +52,21 @@
             android:name=".ReceiptActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".AccountActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AboutActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TermsActivity"
+            android:exported="false" />
+
     </application>
 </manifest>

@@ -14,6 +14,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.lifecycle.lifecycleScope
+import io.github.jan.supabase.auth.auth
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.jsonPrimitive
 
 class AccountActivity : AppCompatActivity() {
 
@@ -56,8 +60,11 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun bindUser() {
-        // TODO: replace with real user data (session / ViewModel)
-        findViewById<TextView>(R.id.tvUserName).text = "RYAN BUTALID!"
+        // Name saved during sign up (falls back to the email)
+        val user = SupabaseClient.client.auth.currentUserOrNull()
+        val fullName = user?.userMetadata?.get("full_name")?.jsonPrimitive?.content
+        val displayName = fullName ?: user?.email ?: "Guest"
+        findViewById<TextView>(R.id.tvUserName).text = "${displayName.uppercase()}!"
 
         val info = packageManager.getPackageInfo(packageName, 0)
         @Suppress("DEPRECATION")
@@ -96,11 +103,18 @@ class AccountActivity : AppCompatActivity() {
             .setMessage("Are you sure you want to log out?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Logout") { _, _ ->
-                // TODO: clear session / tokens, then open your login screen
-                // startActivity(Intent(this, LoginActivity::class.java).apply {
-                //     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                // })
-                finish()
+                lifecycleScope.launch {
+                    try {
+                        SupabaseClient.client.auth.signOut()
+                    } catch (e: Exception) {
+                        // Still go to login even if the network call fails
+                    }
+                    // Open Login and clear all screens behind it
+                    startActivity(Intent(this@AccountActivity, LogInActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    finish()
+                }
             }
             .show()
     }
