@@ -31,15 +31,26 @@ fun Activity.applySystemBarPadding() {
     val startTop = root.paddingTop
     val startBottom = root.paddingBottom
 
+    // Tab screens: the white bottom bar itself stretches down behind the phone's
+    // navigation/gesture area (same as the Account screen), so the bar looks
+    // identical on every tab and doesn't jump when switching.
+    val bottomNav = findViewById<View>(R.id.bottomNav)?.takeIf { it.parent === root }
+    val navStartBottom = bottomNav?.paddingBottom ?: 0
+
     ViewCompat.setOnApplyWindowInsetsListener(root) { view: View, insets ->
         val bars = insets.getInsets(
             WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
         )
         val ime = insets.getInsets(WindowInsetsCompat.Type.ime()) // keyboard
-        view.updatePadding(
-            top = startTop + bars.top,
-            bottom = startBottom + maxOf(bars.bottom, ime.bottom)
-        )
+        if (bottomNav != null) {
+            bottomNav.updatePadding(bottom = navStartBottom + bars.bottom)
+            view.updatePadding(top = startTop + bars.top, bottom = startBottom + ime.bottom)
+        } else {
+            view.updatePadding(
+                top = startTop + bars.top,
+                bottom = startBottom + maxOf(bars.bottom, ime.bottom)
+            )
+        }
         insets
     }
 }

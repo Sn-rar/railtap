@@ -1,21 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- One trip card on the Trip History page (filled in by TripHistoryActivity.kt) -->
-<LinearLayout
+<!--
+    One trip card on the Trip History page, same layout as the receipt's route card
+    (activity_receipt.xml), route only; the full details show on the receipt.
+    Filled in by TripHistoryActivity.kt; tapping it opens the receipt.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="16dp"
     android:background="@drawable/bg_receipt_card"
-    android:orientation="vertical"
-    android:padding="18dp">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingBottom="0dp">
 
-    <!-- Top row: line pill + date -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- ===== Top part: route ===== -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/routeSection"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/lblTransitRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/plus_jakarta_sans_bold"
+            android:letterSpacing="0.05"
+            android:text="TRANSIT ROUTE"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@id/tripLine"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tripLine" />
 
         <TextView
             android:id="@+id/tripLine"
@@ -29,133 +51,76 @@
             android:paddingBottom="4dp"
             android:text="LRT-2"
             android:textColor="@android:color/white"
-            android:textSize="11sp" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tripDate"
-            android:layout_width="0dp"
+            android:id="@+id/lblOrigin"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:drawableStart="@drawable/ic_clock"
-            android:drawablePadding="5dp"
-            android:ellipsize="end"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/plusjakartasans"
-            android:gravity="end|center_vertical"
-            android:maxLines="1"
-            android:text="--"
+            android:text="Origin"
             android:textColor="#6B7280"
-            android:textSize="12sp"
-            app:drawableTint="#94A3B8" />
-    </LinearLayout>
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tripLine" />
 
-    <!-- Route: origin → destination -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/tripOrigin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/plus_jakarta_sans_bold"
-                android:letterSpacing="0.05"
-                android:text="ORIGIN"
-                android:textColor="#94A3B8"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tripOrigin"
-                android:textAllCaps="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/plus_jakarta_sans_bold"
-                android:text="--"
-                android:textColor="@color/neutral_heading"
-                android:textSize="16sp" />
-        </LinearLayout>
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/plus_jakarta_sans_bold"
+            android:text="--"
+            android:textAllCaps="true"
+            android:textColor="@color/neutral_heading"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@id/tripArrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblOrigin" />
 
         <ImageView
             android:id="@+id/tripArrow"
-            android:layout_width="40dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="56dp"
+            android:layout_height="24dp"
             android:importantForAccessibility="no"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_right"
+            app:layout_constraintBottom_toBottomOf="@id/tripOrigin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tripOrigin"
             app:tint="@color/brand" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/plus_jakarta_sans_bold"
-                android:letterSpacing="0.05"
-                android:text="DESTINATION"
-                android:textColor="#94A3B8"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tripDestination"
-                android:textAllCaps="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/plus_jakarta_sans_bold"
-                android:gravity="end"
-                android:text="--"
-                android:textColor="@color/neutral_heading"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Dashed divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/bg_dashed_line"
-        android:layerType="software" />
-
-    <!-- Fare row -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
-
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/plusjakartasans"
-            android:text="Fare"
-            android:textColor="#6B7280"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tripFare"
+            android:id="@+id/lblDestination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/plusjakartasans"
+            android:text="Destination"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/lblOrigin" />
+
+        <TextView
+            android:id="@+id/tripDestination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:fontFamily="@font/plus_jakarta_sans_bold"
-            android:text="₱0.00"
+            android:gravity="end"
+            android:text="--"
+            android:textAllCaps="true"
             android:textColor="@color/neutral_heading"
-            android:textSize="15sp" />
-    </LinearLayout>
-</LinearLayout>
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tripArrow"
+            app:layout_constraintTop_toBottomOf="@id/lblDestination" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

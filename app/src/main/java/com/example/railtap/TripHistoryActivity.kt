@@ -19,6 +19,7 @@ class TripHistoryActivity : LegalBaseActivity() {
     override val screenLayout = R.layout.activity_trip_history
     override val screenTitle = "Trip History"
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // White status bar icons (clock, battery) on the purple header
@@ -45,7 +46,9 @@ class TripHistoryActivity : LegalBaseActivity() {
                 if (trips.isEmpty()) {
                     showEmptyState("No trips yet", "Trips you pay for will show up here.")
                 } else {
-                    trips.forEach { historyList.addView(makeTripCard(it, historyList)) }
+                    // One card per booking (a 3-passenger booking would otherwise show 3 identical cards)
+                    trips.distinctBy { if (it.transactionId > 0) it.transactionId else it.hashCode() }
+                        .forEach { historyList.addView(makeTripCard(it, historyList)) }
                 }
             } catch (e: Exception) {
                 showEmptyState(
@@ -69,8 +72,6 @@ class TripHistoryActivity : LegalBaseActivity() {
 
         card.findViewById<TextView>(R.id.tripOrigin).text = origin
         card.findViewById<TextView>(R.id.tripDestination).text = destination
-        card.findViewById<TextView>(R.id.tripDate).text = trip.date
-        card.findViewById<TextView>(R.id.tripFare).text = trip.fare
 
         // Line pill: green for LRT-1, purple for LRT-2 (same as the receipt)
         val pill = card.findViewById<TextView>(R.id.tripLine)
@@ -78,6 +79,20 @@ class TripHistoryActivity : LegalBaseActivity() {
         if (trip.line.contains("1")) {
             pill.setBackgroundResource(R.drawable.bg_pill_green)
             pill.setTextColor(ContextCompat.getColor(this, R.color.green_line))
+        }
+
+        // Tap the card to see this booking's receipt
+        card.setOnClickListener {
+            ReceiptActivity.open(
+                from = this,
+                total = trip.totalAmount,
+                lineCode = trip.line,
+                origin = origin,
+                destination = destination,
+                referenceNo = trip.referenceNo.ifEmpty { "--" },
+                paidAtMillis = trip.paidAtMillis.takeIf { it > 0 } ?: System.currentTimeMillis(),
+                fromHistory = true
+            )
         }
         return card
     }

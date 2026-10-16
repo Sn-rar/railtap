@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -58,20 +57,17 @@ data class TransitPass(
         }
 }
 
-class TicketsActivity : AppCompatActivity() {
+/** Tickets tab. Layout: fragment_tickets.xml */
+class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
 
     private var allPasses = mutableListOf<TransitPass>()
     private lateinit var adapter: OtherPassesAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_tickets)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
-
-        setupBottomNav(this, NavTab.TICKETS)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val rvOther = findViewById<RecyclerView>(R.id.rvOtherPasses)
-        rvOther.layoutManager = LinearLayoutManager(this)
+        rvOther.layoutManager = LinearLayoutManager(requireContext())
 
         // Adds 16dp spacing between cards without using layout_marginBottom on the item root
         rvOther.addItemDecoration(object : RecyclerView.ItemDecoration() {
@@ -101,8 +97,7 @@ class TicketsActivity : AppCompatActivity() {
         // Setup empty state button
         findViewById<View>(R.id.btnBuyTicketEmpty)?.setOnClickListener {
             // Booking needs a line (LRT-1 / LRT-2), so go to Home to pick one
-            startActivity(android.content.Intent(this, DashboardActivity::class.java)
-                .addFlags(android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            showTab(NavTab.HOME)
         }
 
         fetchPassesFromDatabase()

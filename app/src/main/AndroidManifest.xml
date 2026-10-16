@@ -32,13 +32,8 @@
             android:exported="false" />
 
         <activity
-            android:name=".TicketsActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".TripHistoryActivity"
             android:exported="false" />
-
 
         <!-- PayPal sends the user back here via railtap://paypal/return or /cancel -->
         <activity
@@ -55,10 +50,6 @@
 
         <activity
             android:name=".ReceiptActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".AccountActivity"
             android:exported="false" />
 
         <activity
@@ -93,10 +84,6 @@
                 <data android:scheme="railtap" android:host="reset-password" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".LinesActivity"
-            android:exported="false" />
 
     </application>
 </manifest>

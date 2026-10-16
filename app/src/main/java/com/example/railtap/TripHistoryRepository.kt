@@ -18,7 +18,20 @@ private data class TripTransaction(
     val userId: String,
     val status: String,
     @SerialName("created_at")
-    val createdAt: String
+    val createdAt: String,
+    @SerialName("total_amount")
+    val totalAmount: Double = 0.0
+)
+
+/** The payment row of a booking (for the receipt's reference no. and paid time). */
+@Serializable
+private data class TripPayment(
+    @SerialName("transaction_id")
+    val transactionId: Int,
+    @SerialName("reference_no")
+    val referenceNo: String = "",
+    @SerialName("paid_at")
+    val paidAt: String? = null
 )
 
 @Serializable
@@ -45,8 +58,32 @@ data class TripHistoryItem(
     val date: String,
     val fare: String,
     val origin: String = "",
-    val destination: String = ""
+    val destination: String = "",
+    // For opening the receipt when the card is tapped
+    val transactionId: Int = 0,
+    val totalAmount: Double = 0.0,   // whole booking (all passengers)
+    val referenceNo: String = "",
+    val paidAtMillis: Long = 0L,
+    val passengers: Int = 1
 )
+
+/** Reads a Supabase timestamp like 2026-10-16T05:48:39.747733+00:00 (null if it can't). */
+private fun parseSupabaseTime(value: String?): Date? {
+    if (value.isNullOrBlank()) return null
+    val cleaned = value.replace(Regex("\\.\\d+"), "") // drop fractions of a second
+    for (pattern in listOf("yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ssX", "yyyy-MM-dd'T'HH:mm:ss'Z'")) {
+        try {
+            val parser = SimpleDateFormat(pattern, Locale.US).apply {
+                isLenient = false
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+            parser.parse(cleaned)?.let { return it }
+        } catch (_: Exception) {
+            // try the next pattern
+        }
+    }
+    return null
+}
 
 class TripHistoryRepository {
 
@@ -146,6 +183,27 @@ class TripHistoryRepository {
                 }
                 .decodeList<TripTicket>()
 
+            // Payment info for this booking (reference no. + when it was paid)
+            val payment = try {
+                client.from("payments")
+                    .select {
+                        filter {
+                            eq("transaction_id", transaction.transactionId)
+                        }
+                    }
+                    .decodeList<TripPayment>()
+                    .firstOrNull()
+            } catch (_: Exception) {
+                null
+            }
+            val paidAtMillis = (parseSupabaseTime(payment?.paidAt)
+                ?: parseSupabaseTime(transaction.createdAt))?.time ?: 0L
+            val bookingTotal = if (transaction.totalAmount > 0) {
+                transaction.totalAmount
+            } else {
+                tickets.sumOf { it.fare }
+            }
+
             for (ticket in tickets) {
                 val origin = stations[ticket.originId]?.name
                     ?: "Unknown station"
@@ -216,7 +274,12 @@ class TripHistoryRepository {
                         date = formattedDate,
                         fare = formattedFare,
                         origin = origin,
-                        destination = destination
+                        destination = destination,
+                        transactionId = transaction.transactionId,
+                        totalAmount = bookingTotal,
+                        referenceNo = payment?.referenceNo.orEmpty(),
+                        paidAtMillis = paidAtMillis,
+                        passengers = tickets.size
                     )
                 )
             }

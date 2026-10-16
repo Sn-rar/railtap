@@ -27,7 +27,7 @@ object ProfileAvatar {
             null
         } else {
             val bytes = SupabaseClient.client.storage
-                .from("avatars") // same bucket as AccountActivity
+                .from("avatars") // same bucket as AccountFragment
                 .downloadAuthenticated(path)
             withContext(Dispatchers.IO) { BitmapFactory.decodeByteArray(bytes, 0, bytes.size) }
         }

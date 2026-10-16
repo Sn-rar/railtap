@@ -27,8 +27,23 @@ fun Activity.startWithFade(intent: Intent, fadeMs: Long = 150L) {
             if (a === source) return
             a.application.unregisterActivityLifecycleCallbacks(this)
             val content = a.findViewById<ViewGroup>(android.R.id.content).getChildAt(0) ?: return
-            content.alpha = 0f
-            content.animate().alpha(1f).setDuration(fadeMs).start()
+
+            // Fade the page, but NOT the bottom navigation bar: it's the same on every tab,
+            // so it should stay perfectly still (fading it made it flicker).
+            val bottomNav = a.findViewById<android.view.View>(R.id.bottomNav)
+            val group = content as? ViewGroup
+            if (group == null || bottomNav == null || bottomNav.parent !== group) {
+                // Screens without a bottom bar (e.g. Splash -> Login): fade everything
+                content.alpha = 0f
+                content.animate().alpha(1f).setDuration(fadeMs).start()
+                return
+            }
+            for (i in 0 until group.childCount) {
+                val child = group.getChildAt(i)
+                if (child === bottomNav) continue
+                child.alpha = 0f
+                child.animate().alpha(1f).setDuration(fadeMs).start()
+            }
         }
 
         override fun onActivityCreated(a: Activity, b: Bundle?) {}
@@ -42,6 +57,14 @@ fun Activity.startWithFade(intent: Intent, fadeMs: Long = 150L) {
     startActivity(intent)
     @Suppress("DEPRECATION")
     overridePendingTransition(0, 0) // older Android: no system animation
+}
+
+/** Opens a screen instantly: no slide, no fade (used for bottom-bar tab switches). */
+fun Activity.startWithoutAnimation(intent: Intent) {
+    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+    startActivity(intent)
+    @Suppress("DEPRECATION")
+    overridePendingTransition(0, 0)
 }
 
 /** Turns off the closing animation for this screen (call before finish / finishAffinity). */

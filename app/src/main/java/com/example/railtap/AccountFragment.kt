@@ -12,11 +12,6 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
@@ -29,7 +24,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import java.io.ByteArrayOutputStream
 
-class AccountActivity : AppCompatActivity() {
+/** Account tab. Layout: fragment_account.xml */
+class AccountFragment : TabFragment(R.layout.fragment_account) {
 
     private companion object {
         const val AVATAR_BUCKET = "avatars"
@@ -43,29 +39,12 @@ class AccountActivity : AppCompatActivity() {
             if (uri != null) uploadAvatar(uri)
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_account)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        applyWindowInsets()
         bindUser()
         loadAvatar()
         setupMenu()
-        setupBottomNav(this, NavTab.ACCOUNT)
-    }
-
-    private fun applyWindowInsets() {
-        val header = findViewById<View>(R.id.header)
-        val bottomNav = findViewById<View>(R.id.bottomNav)
-        val headerTop = header.paddingTop
-        val navBottom = bottomNav.paddingBottom
-        ViewCompat.setOnApplyWindowInsetsListener(header.parent as View) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            header.updatePadding(top = headerTop + bars.top)
-            bottomNav.updatePadding(bottom = navBottom + bars.bottom)
-            insets
-        }
     }
 
     private fun bindUser() {
@@ -102,7 +81,7 @@ class AccountActivity : AppCompatActivity() {
 
     /** Loads the saved avatar (if any) when the screen opens. */
     private fun loadAvatar() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val path = SupabaseClient.client.postgrest
                     .rpc("get_my_avatar_path")
@@ -131,7 +110,7 @@ class AccountActivity : AppCompatActivity() {
             return
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val bitmap = withContext(Dispatchers.IO) { decodeScaled(uri) }
                 if (bitmap == null) {
@@ -190,16 +169,16 @@ class AccountActivity : AppCompatActivity() {
 
     private fun setupMenu() {
         findViewById<View>(R.id.menuAbout).setOnClickListener {
-            startActivity(Intent(this, AboutActivity::class.java))
+            startActivity(Intent(requireContext(), AboutActivity::class.java))
         }
         findViewById<View>(R.id.menuPrivacy).setOnClickListener {
-            startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+            startActivity(Intent(requireContext(), PrivacyPolicyActivity::class.java))
         }
         findViewById<View>(R.id.menuTerms).setOnClickListener {
-            startActivity(Intent(this, TermsActivity::class.java))
+            startActivity(Intent(requireContext(), TermsActivity::class.java))
         }
         findViewById<View>(R.id.menuContact).setOnClickListener {
-            startActivity(Intent(this, ContactUsActivity::class.java))
+            startActivity(Intent(requireContext(), ContactUsActivity::class.java))
         }
         findViewById<View>(R.id.menuLogout).setOnClickListener {
             confirmLogout()
@@ -207,12 +186,12 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun confirmLogout() {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle("Logout")
             .setMessage("Are you sure you want to log out?")
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Logout") { _, _ ->
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     ProfileAvatar.clear() // forget this user's photo
                     try {
                         SupabaseClient.client.auth.signOut()
@@ -220,15 +199,15 @@ class AccountActivity : AppCompatActivity() {
                         // Still go to login even if the network call fails
                     }
                     // Open Login and clear all screens behind it
-                    startActivity(Intent(this@AccountActivity, LogInActivity::class.java).apply {
+                    startActivity(Intent(requireContext(), LogInActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     })
-                    finish()
+                    requireActivity().finish()
                 }
             }
             .show()
     }
 
     private fun toast(message: String) =
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
 }
