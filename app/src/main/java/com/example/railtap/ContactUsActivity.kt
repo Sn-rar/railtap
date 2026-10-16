@@ -14,7 +14,7 @@ class ContactUsActivity : LegalBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Tap the email address to open the user's mail app
+        // open mail app
         findViewById<TextView>(R.id.tvEmail).setOnClickListener {
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:railtap.support@gmail.com")

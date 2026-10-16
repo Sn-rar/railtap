@@ -5,10 +5,7 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 
-/**
- * Extra UI safeguard for scanner sessions: no passenger pages or booking flow.
- * Android checks alone are not a security boundary; protect server operations too.
- */
+// keeps scanner accounts on the scanner screen only
 class ScannerOnlyApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onCreate() {
         super.onCreate()

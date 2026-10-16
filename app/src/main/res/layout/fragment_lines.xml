@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="#F8F9FD">
 
-    <!-- Header, same style as the Tickets tab. The title changes to LRT LINE 1 / 2
-         when a line pill is tapped (see LinesActivity.kt). -->
+    <!-- header -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -56,8 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
-    <!-- Map. To use your own artwork add: app:baseDrawable / app:lrt1Drawable / app:lrt2Drawable
-         (and app:drawLabels="false" if the station names are already inside your layers). -->
+    <!-- map -->
     <com.example.railtap.LinesMapView
         android:id="@+id/linesMap"
         android:layout_width="match_parent"

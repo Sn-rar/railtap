@@ -16,12 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
-/**
- * Set New Password page.
- * Opens when the user taps the reset link from the email (railtap://reset-password).
- * The link logs them in temporarily so they can choose a new password.
- * Layout: res/layout/activity_reset_password.xml
- */
+// Set new password (opened from the reset link in the email)
 class ResetPasswordActivity : AppCompatActivity() {
 
     private val newPasswordInput by lazy { findViewById<TextInputEditText>(R.id.newPasswordInput) }
@@ -33,9 +28,9 @@ class ResetPasswordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reset_password)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
-        // Read the login info inside the reset link
+        // log in using the link
         SupabaseClient.client.handleDeeplinks(intent)
 
         hideErrorWhenTyping(passwordError, newPasswordInput)
@@ -45,7 +40,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         updateButton.setOnClickListener { updatePassword() }
     }
 
-    // If this page is already open and the user taps a reset link again
+    // link tapped again while open
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -56,7 +51,6 @@ class ResetPasswordActivity : AppCompatActivity() {
         val password = newPasswordInput.text.toString().trim()
         val confirm = confirmInput.text.toString().trim()
 
-        // Check both rules and show every problem at once
         var hasError = false
         if (password.length < 6) {
             passwordError.showError("Password must be at least 6 characters")
@@ -73,7 +67,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Wait (max 8 seconds) until the reset link has logged the user in
+                // wait for the link to log them in
                 val ready = withTimeoutOrNull(8000) {
                     SupabaseClient.client.auth.sessionStatus.first { it is SessionStatus.Authenticated }
                 }
@@ -82,10 +76,9 @@ class ResetPasswordActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                // Save the new password
                 SupabaseClient.client.auth.updateUser { this.password = password }
 
-                // Log out so they sign in fresh with the new password
+                // log out so they sign in again
                 SupabaseClient.client.auth.signOut()
                 Toast.makeText(
                     this@ResetPasswordActivity,
@@ -111,7 +104,6 @@ class ResetPasswordActivity : AppCompatActivity() {
         }
     }
 
-    /** Open the Login screen and clear everything behind it. */
     private fun goToLogin() {
         startActivity(Intent(this, LogInActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

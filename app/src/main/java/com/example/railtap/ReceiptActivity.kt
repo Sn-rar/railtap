@@ -18,11 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/**
- * Payment receipt shown after a successful PayPal payment.
- * Layout: res/layout/activity_receipt.xml
- * Opened from BookingActivity with ReceiptActivity.open(...)
- */
+// Receipt screen (after paying, or from trip history)
 class ReceiptActivity : AppCompatActivity() {
 
     companion object {
@@ -33,17 +29,26 @@ class ReceiptActivity : AppCompatActivity() {
         private const val EXTRA_REFERENCE_NO = "extra_reference_no"
         private const val EXTRA_PAID_AT = "extra_paid_at"
         private const val EXTRA_FROM_HISTORY = "extra_from_history"
+        private const val EXTRA_REGULAR = "extra_regular"
+        private const val EXTRA_STUDENT = "extra_student"
+        private const val EXTRA_SENIOR = "extra_senior"
+        private const val EXTRA_PWD = "extra_pwd"
 
-        /** Opens the receipt screen with the booking details. */
+        
         fun open(
             from: AppCompatActivity,
             total: Double,
-            lineCode: String,       // "LRT1" or "LRT2"
+            lineCode: String,
             origin: String,
             destination: String,
             referenceNo: String,
-            paidAtMillis: Long = System.currentTimeMillis(), // when it was paid
-            fromHistory: Boolean = false // true = opened from Trip History (back goes back there)
+            paidAtMillis: Long = System.currentTimeMillis(),
+            fromHistory: Boolean = false, // back goes to trip history
+            // passenger counts (0 = hidden)
+            regular: Int = 0,
+            student: Int = 0,
+            senior: Int = 0,
+            pwd: Int = 0
         ) {
             val intent = Intent(from, ReceiptActivity::class.java).apply {
                 putExtra(EXTRA_TOTAL, total)
@@ -53,24 +58,26 @@ class ReceiptActivity : AppCompatActivity() {
                 putExtra(EXTRA_REFERENCE_NO, referenceNo)
                 putExtra(EXTRA_PAID_AT, paidAtMillis)
                 putExtra(EXTRA_FROM_HISTORY, fromHistory)
+                putExtra(EXTRA_REGULAR, regular)
+                putExtra(EXTRA_STUDENT, student)
+                putExtra(EXTRA_SENIOR, senior)
+                putExtra(EXTRA_PWD, pwd)
             }
             from.startActivity(intent)
         }
     }
 
-    private val peso: NumberFormat = NumberFormat.getCurrencyInstance(Locale("en", "PH"))
+    private val peso: NumberFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-PH"))
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receipt)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
-        // ---- Read the booking details ----
         val total = intent.getDoubleExtra(EXTRA_TOTAL, 0.0)
         val lineCode = intent.getStringExtra(EXTRA_LINE).orEmpty()
         val paidAt = intent.getLongExtra(EXTRA_PAID_AT, System.currentTimeMillis())
 
-        // ---- Fill in the screen ----
         findViewById<TextView>(R.id.tvReceiptTotal).text = peso.format(total)
         findViewById<TextView>(R.id.tvReceiptTotalFare).text = peso.format(total)
         findViewById<TextView>(R.id.tvReceiptOrigin).text = intent.getStringExtra(EXTRA_ORIGIN) ?: "--"
@@ -80,7 +87,9 @@ class ReceiptActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvReceiptDateTime).text =
             SimpleDateFormat("MM/dd/yyyy • hh:mm a", Locale.getDefault()).format(Date(paidAt))
 
-        // Line pill: green for LRT-1, purple for LRT-2
+        showPassengerBreakdown()
+
+        // green = LRT-1, purple = LRT-2
         val linePill = findViewById<TextView>(R.id.tvReceiptLine)
         if (lineCode.contains("1")) {
             linePill.text = "LRT LINE 1"
@@ -90,35 +99,66 @@ class ReceiptActivity : AppCompatActivity() {
             linePill.text = "LRT LINE 2"
         }
 
-        // ---- Buttons ----
+        // buttons
         findViewById<View>(R.id.btnCloseReceipt).setOnClickListener { close() }
 
         findViewById<View>(R.id.btnShowPasses).setOnClickListener {
-            DashboardActivity.open(this, NavTab.TICKETS) // main screen, Tickets tab
+            DashboardActivity.open(this, NavTab.TICKETS)
             finish()
         }
 
         findViewById<View>(R.id.btnDownloadReceipt).setOnClickListener { downloadReceipt() }
 
-        // Past trips (opened from Trip History): no "Show Turnstile Passes" button
+        // old trips: no passes button
         if (intent.getBooleanExtra(EXTRA_FROM_HISTORY, false)) {
             findViewById<View>(R.id.btnShowPasses).visibility = View.GONE
-            // Old trip: don't say the passes are ready to tap
             findViewById<TextView>(R.id.tvReceiptMessage).text = "This trip was paid with PayPal."
         }
 
-        // Phone's back button: same as X (not back to the booking/payment screen)
+        // back = same as X
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = close()
         })
     }
 
-    /** X / back: return to Trip History if opened from there, otherwise go Home. */
+    // "Adult x2" rows, skip zeros
+    private fun showPassengerBreakdown() {
+        val box = findViewById<android.widget.LinearLayout>(R.id.receiptPassengers)
+        box.removeAllViews()
+        val rows = listOf(
+            "Adult" to intent.getIntExtra(EXTRA_REGULAR, 0),
+            "Student" to intent.getIntExtra(EXTRA_STUDENT, 0),
+            "Senior / PWD" to intent.getIntExtra(EXTRA_SENIOR, 0),
+            "PWD" to intent.getIntExtra(EXTRA_PWD, 0)
+        ).filter { it.second > 0 }
+
+        val density = resources.displayMetrics.density
+        val font = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.plusjakartasans)
+        for ((label, count) in rows) {
+            val row = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.HORIZONTAL
+                setPadding(0, (14 * density).toInt(), 0, 0)
+            }
+            row.addView(TextView(this).apply {
+                text = label
+                textSize = 14f
+                typeface = font
+                setTextColor(android.graphics.Color.parseColor("#6B7280"))
+            }, android.widget.LinearLayout.LayoutParams(0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
+            row.addView(TextView(this).apply {
+                text = "× $count"
+                textSize = 14f
+                typeface = font
+                setTextColor(ContextCompat.getColor(this@ReceiptActivity, R.color.neutral_heading))
+            })
+            box.addView(row)
+        }
+    }
+
     private fun close() {
         if (intent.getBooleanExtra(EXTRA_FROM_HISTORY, false)) finish() else goHome()
     }
 
-    /** Go back to the Dashboard and clear the booking screens behind it. */
     private fun goHome() {
         val intent = Intent(this, DashboardActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -126,19 +166,17 @@ class ReceiptActivity : AppCompatActivity() {
         finish()
     }
 
-    /** Saves a picture of the receipt to the phone's Pictures/RailTap folder. */
+    // save receipt as an image in Pictures/RailTap
     private fun downloadReceipt() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             Toast.makeText(this, "Download needs Android 10 or newer", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // 1. Draw the receipt content into an image
         val content = findViewById<View>(R.id.receiptContent)
         val bitmap = Bitmap.createBitmap(content.width, content.height, Bitmap.Config.ARGB_8888)
         content.draw(Canvas(bitmap))
 
-        // 2. Save it to Pictures/RailTap
         val reference = intent.getStringExtra(EXTRA_REFERENCE_NO) ?: "receipt"
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "RailTap_$reference.png")

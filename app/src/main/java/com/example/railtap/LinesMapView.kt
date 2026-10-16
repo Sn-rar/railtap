@@ -17,23 +17,16 @@ import kotlin.math.floor
 import kotlin.math.hypot
 import kotlin.math.min
 
-/**
- * Pinch-zoom / pan map made of three layers: a base layer and one layer per line.
- *
- * - Tap a line  -> it becomes [selectedLine], the other line fades to [dimmedAlpha].
- * - Tap the selected line again, or empty space -> selection cleared (both lines full opacity).
- * - Layers are plain Drawables (VectorDrawable, PNG...), so you can swap in your own art via
- *   app:baseDrawable / app:lrt1Drawable / app:lrt2Drawable. Hit-testing and "focus" bounds are
- *   computed from each layer's pixels, so no geometry needs to be duplicated in code.
- */
+// Zoomable map with 3 layers (base, LRT-1, LRT-2).
+// Tap a line to select it, tap again or tap empty space to clear.
 class LinesMapView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    /** Called whenever the selection changes (from a tap or from code). */
+    // called when the selection changes
     var onSelectionChanged: ((MapLine?) -> Unit)? = null
 
-    /** null = both lines active. */
+    // null = both lines
     var selectedLine: MapLine? = null
         set(value) {
             if (field == value) return
@@ -44,7 +37,7 @@ class LinesMapView @JvmOverloads constructor(
 
     var dimmedAlpha = 0.25f
 
-    /** Space at the bottom (e.g. the LRT 1 / LRT 2 pills) that the map should not be centred under. */
+    // space for the pills at the bottom
     var bottomInset = 0
         set(value) { field = value; if (width > 0) resetView(false) }
 
@@ -114,7 +107,7 @@ class LinesMapView @JvmOverloads constructor(
         canvas.concat(mapMatrix)
         baseLayer?.draw(canvas)
 
-        // selected line is painted last so it sits on top at the crossing
+        // draw selected line last so it's on top
         for (line in MapLine.values().sortedBy { if (it == selectedLine) 1 else 0 }) {
             val a = lineAlpha[line.ordinal]
             lineLayers.getValue(line).apply { alpha = (255 * a).toInt(); draw(canvas) }
@@ -174,7 +167,7 @@ class LinesMapView @JvmOverloads constructor(
         fitRect(RectF(0f, 0f, mapW, mapH), animate, 0f)
     }
 
-    /** Zoom/pan so that [r] (map pixels) fills the view, leaving [padPx] screen pixels around it. */
+    // zoom so r fills the screen
     fun fitRect(r: RectF, animate: Boolean = true, padPx: Float = 40f * density) {
         val s = min((width - 2 * padPx) / r.width(), (viewH() - 2 * padPx) / r.height())
             .coerceIn(fitScale, fitScale * maxZoom)
@@ -185,7 +178,7 @@ class LinesMapView @JvmOverloads constructor(
         animateTo(target, animate)
     }
 
-    /** Zoom to a whole line (does not change the selection). */
+    // zoom to a line
     fun focusLine(line: MapLine, animate: Boolean = true) =
         fitRect(lineBounds(line), animate, padPx = 56f * density)
 
@@ -235,7 +228,7 @@ class LinesMapView @JvmOverloads constructor(
         else RectF(x0 / hitScale, y0 / hitScale, (x1 + 1) / hitScale, (y1 + 1) / hitScale)
     }
 
-    /** Distance (in hit-bitmap px) to the nearest opaque pixel of [line] within [r], or null. */
+    // distance to the closest pixel of the line, or null
     private fun distanceToLine(line: MapLine, mx: Float, my: Float, r: Float): Float? {
         val bmp = hitBitmap(line)
         val cx = mx * hitScale; val cy = my * hitScale; val rr = r * hitScale

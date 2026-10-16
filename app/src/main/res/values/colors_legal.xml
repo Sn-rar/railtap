@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Extra colors for About / Terms / Privacy screens -->
+    <!-- about/terms/privacy colors -->
     <color name="legal_body">#484553</color>
     <color name="legal_divider">#E1E1EE</color>
 </resources>

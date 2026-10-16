@@ -11,13 +11,13 @@ import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.jsonPrimitive
 
-/** Home tab (was the Dashboard screen). Layout: fragment_home.xml */
+// Home tab
 class HomeFragment : TabFragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Buy Ticket buttons for both train lines
+        // buy ticket buttons
         findViewById<View>(R.id.greenLineButton).setOnClickListener {
             openBooking("LRT-1")
         }
@@ -26,7 +26,7 @@ class HomeFragment : TabFragment(R.layout.fragment_home) {
             openBooking("LRT-2")
         }
 
-        // Profile picture circle (top right): tapping it opens the Account tab
+        // avatar -> account tab
         findViewById<View>(R.id.avatarCircle).setOnClickListener {
             showTab(NavTab.ACCOUNT)
         }
@@ -39,41 +39,37 @@ class HomeFragment : TabFragment(R.layout.fragment_home) {
     override fun onTabShown() {
         showWelcomeName()
         loadProfilePicture()
-        loadTripHistory() // refresh stats each time Home is shown (e.g. after a new booking)
+        loadTripHistory()
     }
 
-    /** "WELCOME RYAN BUTALID" using the name saved at sign up (falls back to just "WELCOME"). */
+    // "WELCOME <NAME>"
     private fun showWelcomeName() {
         val user = SupabaseClient.client.auth.currentUserOrNull()
         val name = user?.userMetadata?.get("full_name")?.jsonPrimitive?.content?.trim()
         val label = findViewById<TextView>(R.id.welcomeLabel)
         label.text = if (name.isNullOrEmpty()) "WELCOME" else "WELCOME ${name.uppercase()}"
-        // The text sits in a HorizontalScrollView so it can be its full length;
-        // block finger-scrolling so only the animation moves it
+        // don't let the user scroll it by hand
         (label.parent as View).setOnTouchListener { _, _ -> true }
-        // Wait until it's measured, then slide it if it doesn't fit
+        // wait for layout, then slide if too long
         label.post { slideIfTooLong(label) }
     }
 
     private var welcomeSlide: android.animation.ValueAnimator? = null
 
-    /**
-     * If the WELCOME text is wider than its space, slide it left until the end of the
-     * name shows, pause, slide back, pause, and repeat — like a train sign.
-     */
+    // long names slide left and back, like a train sign
     private fun slideIfTooLong(label: TextView) {
         welcomeSlide?.cancel()
         label.translationX = 0f
 
         val box = label.parent as View
         val overflow = label.width - box.width
-        if (overflow <= 0) return // it fits, no need to move
+        if (overflow <= 0) return // fits
 
         val pauseMs = 1200L
-        val moveMs = (overflow * 12L).coerceIn(1200L, 6000L) // longer names move a bit longer
+        val moveMs = (overflow * 12L).coerceIn(1200L, 6000L) // longer name = slower
         val total = (pauseMs + moveMs) * 2
 
-        // Timeline: pause → slide left → pause → slide back
+        // pause, slide left, pause, slide back
         fun at(ms: Long) = ms.toFloat() / total
         val x = android.animation.PropertyValuesHolder.ofKeyframe(
             View.TRANSLATION_X,
@@ -92,14 +88,14 @@ class HomeFragment : TabFragment(R.layout.fragment_home) {
     }
 
     override fun onTabHidden() {
-        welcomeSlide?.cancel() // stop animating while the screen isn't visible
+        welcomeSlide?.cancel()
     }
 
-    /** Shows the user's profile picture (same as in Account) in the top-right circle. */
+    // profile pic in the top right
     private fun loadProfilePicture() {
         val avatar = findViewById<ImageView>(R.id.avatarCircle)
 
-        // Show the saved copy instantly, then refresh it from Supabase
+        // show cached one first, then refresh
         ProfileAvatar.cached?.let { avatar.showProfilePicture(it) }
         viewLifecycleOwner.lifecycleScope.launch {
             ProfileAvatar.load()?.let { avatar.showProfilePicture(it) }

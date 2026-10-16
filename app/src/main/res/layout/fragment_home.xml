@@ -20,8 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Clips the WELCOME text; if the name is too long it slides left and back
-             (animation in DashboardActivity.kt). -->
+        <!-- welcome text (slides if the name is long) -->
         <HorizontalScrollView
             android:id="@+id/welcomeContainer"
             android:layout_width="0dp"

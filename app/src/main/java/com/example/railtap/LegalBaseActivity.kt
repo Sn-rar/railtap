@@ -10,10 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
-/**
- * Shared behavior for the static text screens (About, Terms, Privacy Policy):
- * sets the title, wires the back button and handles status/navigation bar insets.
- */
+// base for About / Terms / Privacy: title, back button, insets
 abstract class LegalBaseActivity : AppCompatActivity() {
 
     @get:LayoutRes

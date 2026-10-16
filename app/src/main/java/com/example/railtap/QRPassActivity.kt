@@ -31,7 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** The same QR remains visible after ENTRY; only EXIT permanently consumes it. */
+// QR stays after entry, only gets used up on exit
 class QRPassActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_TRANSACTION_ID = "railtap_transaction_id"
@@ -45,7 +45,7 @@ class QRPassActivity : AppCompatActivity() {
     private var selected = 0
     private val latest = mutableMapOf<Int, TicketUsageStatus>()
     private var statusJob: Job? = null
-    private val peso = NumberFormat.getCurrencyInstance(Locale("en", "PH"))
+    private val peso = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-PH"))
     private val dateFormat = SimpleDateFormat("MMM d, yyyy h:mm a", Locale.getDefault())
 
     private val refresher = object : Runnable {
@@ -211,7 +211,7 @@ class QRPassActivity : AppCompatActivity() {
         }
     }
 
-    /** Read-only refresh. Supabase is the source of truth for entry/exit state. */
+    // refresh status from supabase
     private fun refreshSelectedTicket() {
         val ticket = pass?.tickets?.getOrNull(selected) ?: return
         if (statusJob?.isActive == true) return

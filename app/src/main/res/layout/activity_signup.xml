@@ -159,7 +159,7 @@
                 android:textColor="@color/neutral_heading"
                 android:textSize="14sp" />
 
-            <!-- Error message (hidden until there's a problem) -->
+            <!-- error text -->
             <TextView
                 android:id="@+id/passwordError"
                 style="@style/FieldErrorText"
@@ -238,7 +238,7 @@
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- "Passwords do not match" error, centered under the box (hidden until needed) -->
+            <!-- passwords dont match -->
             <TextView
                 android:id="@+id/confirmPasswordError"
                 style="@style/FieldErrorText"

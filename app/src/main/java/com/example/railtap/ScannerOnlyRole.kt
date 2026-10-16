@@ -4,11 +4,8 @@ import android.util.Base64
 import io.github.jan.supabase.auth.auth
 import org.json.JSONObject
 
-/**
- * UI routing only. Reads the server-issued app_metadata role from the logged-in JWT.
- * This is NOT a substitute for server authorization; redemption is protected by
- * public.redeem_ticket_at_gate() in Supabase, which checks auth.jwt().
- */
+// checks if the logged in account is a gate scanner (from the jwt).
+// just for routing, the real check is in redeem_ticket_at_gate() on supabase
 object ScannerOnlyRole {
     fun isScanner(): Boolean {
         val jwt = SupabaseClient.client.auth.currentAccessTokenOrNull() ?: return false

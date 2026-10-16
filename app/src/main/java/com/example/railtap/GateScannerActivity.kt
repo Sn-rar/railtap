@@ -23,7 +23,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-/** Demo scanner account: choose an entrance/exit station, then scan a passenger QR. */
+// gate scanner: pick station, then scan QR
 class GateScannerActivity : AppCompatActivity() {
     private val repository = GateScannerRepository()
     private lateinit var camera: DecoratedBarcodeView

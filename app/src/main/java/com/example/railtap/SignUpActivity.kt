@@ -20,7 +20,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
 
@@ -30,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
         val confirmPasswordInput = findViewById<TextInputEditText>(R.id.confirmPasswordInput)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
 
-        // Red error messages above the password boxes
+        // password errors
         val passwordError = findViewById<TextView>(R.id.passwordError)
         val confirmPasswordError = findViewById<TextView>(R.id.confirmPasswordError)
         hideErrorWhenTyping(passwordError, passwordInput)
@@ -38,7 +38,7 @@ class SignUpActivity : AppCompatActivity() {
 
         // Back button
         backButton.setOnClickListener {
-            finish() // the Login screen is already behind this one
+            finish()
         }
 
         // Sign up logic
@@ -53,7 +53,6 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Check both password rules and show every problem at once
             var hasError = false
             if (password.length < 6) {
                 passwordError.showError("Password must be at least 6 characters")
@@ -73,7 +72,7 @@ class SignUpActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // Create the user and store the full name in their metadata
+                    // create user + save full name
                     SupabaseClient.client.auth.signUpWith(Email) {
                         this.email = email
                         this.password = password
@@ -83,12 +82,12 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
                     if (SupabaseClient.client.auth.currentSessionOrNull() != null) {
-                        // Email confirmation is OFF: the user is already signed in
+                        // email confirm is off, already logged in
                         Toast.makeText(this@SignUpActivity, "Account created!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this@SignUpActivity, DashboardActivity::class.java))
                         finish()
                     } else {
-                        // Email confirmation is ON: user must verify before signing in
+                        // email confirm is on
                         Toast.makeText(
                             this@SignUpActivity,
                             "Account created! Check your email to confirm, then sign in.",

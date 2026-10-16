@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Placeholder Maya logo: green rounded square with a white "M". Swap for the real logo PNG later. -->
+<!-- placeholder maya logo -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="40dp" android:height="40dp"
     android:viewportWidth="40" android:viewportHeight="40">

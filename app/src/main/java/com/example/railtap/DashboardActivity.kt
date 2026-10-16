@@ -7,24 +7,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
-/**
- * The main screen after logging in. It holds the bottom bar and the 4 tabs
- * (HomeFragment, TicketsFragment, LinesFragment, AccountFragment).
- *
- * Switching tabs only shows/hides fragments: instant, no flicker, and each tab
- * keeps its scroll position and loaded data.
- * Layout: res/layout/activity_main.xml
- */
+// Main screen: holds the bottom nav and the 4 tab fragments
 class DashboardActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_TAB = "extra_tab"
 
-        /** Open the main screen on a specific tab (e.g. from the Receipt or Booking). */
+        // open main screen on a specific tab
         fun open(from: Activity, tab: NavTab = NavTab.HOME) {
             from.startActivity(Intent(from, DashboardActivity::class.java).apply {
                 putExtra(EXTRA_TAB, tab.name)
-                // Reuse the existing main screen and close anything opened on top of it
+                // reuse it instead of opening a new one
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             })
@@ -38,11 +31,11 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        applySystemBarPadding() // status bar on top, bottom bar stretches behind the gesture bar
+        applySystemBarPadding()
 
         setupTabBar(this) { tab -> showTab(tab) }
 
-        // Phone back button: from another tab go to Home; on Home, close the app as usual
+        // back: go to home first, then exit
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (currentTab != NavTab.HOME) {
@@ -60,7 +53,7 @@ class DashboardActivity : AppCompatActivity() {
         showTab(startTab)
     }
 
-    // Opened again (e.g. "Show Turnstile Passes" on the receipt) -> switch to the requested tab
+    // switch tab if opened again (like from the receipt)
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -76,7 +69,7 @@ class DashboardActivity : AppCompatActivity() {
         intent?.getStringExtra(EXTRA_TAB)?.let { runCatching { NavTab.valueOf(it) }.getOrNull() }
             ?: NavTab.HOME
 
-    /** Shows one tab and hides the others. Each tab is created the first time it's opened. */
+    // show one tab, hide the rest
     fun showTab(tab: NavTab) {
         currentTab = tab
         highlightTab(this, tab)

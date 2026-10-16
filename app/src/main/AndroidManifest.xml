@@ -40,7 +40,7 @@
             android:name=".TripHistoryActivity"
             android:exported="false" />
 
-        <!-- PayPal sends the user back here via railtap://paypal/return or /cancel -->
+        <!-- paypal redirect -->
         <activity
             android:name=".BookingActivity"
             android:exported="true"
@@ -77,7 +77,7 @@
             android:name=".ForgotPasswordActivity"
             android:exported="false" />
 
-        <!-- Opens from the password reset email link: railtap://reset-password -->
+        <!-- reset password link -->
         <activity
             android:name=".ResetPasswordActivity"
             android:exported="true"
@@ -90,12 +90,12 @@
             </intent-filter>
         </activity>
 
-        <!-- QR passes for the turnstile (from Cat's branch) -->
+        <!-- qr pass -->
         <activity
             android:name=".QRPassActivity"
             android:exported="false" />
 
-        <!-- Gate QR scanner for staff accounts (from Cat's cath-2 branch) -->
+        <!-- gate scanner -->
         <activity
             android:name=".GateScannerActivity"
             android:exported="false" />

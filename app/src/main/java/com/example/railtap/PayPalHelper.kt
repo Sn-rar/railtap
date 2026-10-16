@@ -8,14 +8,9 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-/**
- * Talks to the PayPal SANDBOX (fake money, for testing only).
- *
- * The secret key is inside the app here, which is only okay for testing.
- * For a real app, this code should run on a server instead.
- *
- * All functions make network calls, so call them from a background thread.
- */
+// PayPal sandbox (fake money, testing only).
+// NOTE: secret key is in the app, move this to a server for a real release.
+// Call these from a background thread.
 object PayPalHelper {
 
     private const val BASE_URL = "https://api-m.sandbox.paypal.com"
@@ -25,7 +20,7 @@ object PayPalHelper {
     private val http = OkHttpClient()
     private val JSON = "application/json".toMediaType()
 
-    // Sends a request and returns the response as JSON (throws an error if PayPal says no)
+    // send request, return json (throws on error)
     private fun send(request: Request): JSONObject {
         http.newCall(request).execute().use { response ->
             val body = response.body?.string().orEmpty()
@@ -36,7 +31,7 @@ object PayPalHelper {
         }
     }
 
-    // Step 1: get an access token using the Client ID and Secret
+    // get access token
     private fun getAccessToken(): String {
         val request = Request.Builder()
             .url("$BASE_URL/v1/oauth2/token")
@@ -46,7 +41,7 @@ object PayPalHelper {
         return send(request).getString("access_token")
     }
 
-    // Step 2: create an order and return the PayPal link the user needs to open
+    // create order, returns the approve link
     fun createOrder(amountPesos: String, referenceNo: String): String {
         val body = """
             {
@@ -87,8 +82,7 @@ object PayPalHelper {
         throw Exception("PayPal did not return an approval link")
     }
 
-    // Step 3: after the user approves, capture (complete) the payment.
-    // Returns "COMPLETED" if the money went through.
+    // capture after the user approves, returns "COMPLETED" if it worked
     fun captureOrder(orderId: String): String {
         val request = Request.Builder()
             .url("$BASE_URL/v2/checkout/orders/$orderId/capture")

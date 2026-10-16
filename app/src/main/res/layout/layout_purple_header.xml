@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Purple header (same look as the Booking screen): white back arrow + centered white title.
-    Uses the same IDs as layout_legal_header.xml (btnBack, tvTitle), so LegalBaseActivity
-    fills it in automatically. Put the page content on a sheet with @drawable/bg_sheet_top_rounded.
--->
+<!-- purple header with back button -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -47,7 +43,7 @@
         app:layout_constraintStart_toEndOf="@id/btnBack"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Empty space the same width as the back button, so the title stays truly centered -->
+    <!-- keeps the title centered -->
     <Space
         android:id="@+id/titleBalance"
         android:layout_width="44dp"

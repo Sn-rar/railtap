@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 
-/** Lines tab (map). Layout: fragment_lines.xml */
+// Lines tab (map)
 class LinesFragment : TabFragment(R.layout.fragment_lines) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Header title (same style as the Tickets tab); changes with the selected line
+        // title changes with the selected line
         val title = findViewById<TextView>(R.id.tvTitle)
         title.text = "LINES"
 
@@ -26,7 +26,6 @@ class LinesFragment : TabFragment(R.layout.fragment_lines) {
 
         // Pills are indicators: lit = line is active. With no selection both are lit.
         fun render(selected: MapLine?) {
-            // Header title follows the selected line
             title.text = when (selected) {
                 MapLine.LRT1 -> "LRT LINE 1"
                 MapLine.LRT2 -> "LRT LINE 2"

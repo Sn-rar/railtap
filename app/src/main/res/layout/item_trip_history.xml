@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    One trip card on the Trip History page, same layout as the receipt's route card
-    (activity_receipt.xml), route only; the full details show on the receipt.
-    Filled in by TripHistoryActivity.kt; tapping it opens the receipt.
--->
+<!-- trip card -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

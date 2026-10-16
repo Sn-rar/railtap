@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Red error message shown above a text box (Login / Sign Up) -->
+<!-- red error text -->
 <resources>
     <style name="FieldErrorText">
         <item name="android:layout_width">match_parent</item>

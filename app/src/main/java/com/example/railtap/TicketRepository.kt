@@ -9,7 +9,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** DTOs exactly follow the existing RailTap Supabase columns. */
+// same columns as supabase
 @Serializable
 private data class TicketDb(
     @SerialName("ticket_id") val ticketId: Int,
@@ -123,7 +123,7 @@ data class TransitPass(
 
 }
 
-/** A single refresh loads both live and already-consumed tickets for the owner. */
+// active + used tickets
 data class TicketOverview(
     val active: List<TransitPass>,
     val scanned: List<TransitPass>
@@ -135,9 +135,9 @@ data class TicketUsageStatus(
     val enteredAtMillis: Long?
 )
 
-/** Handles ISO timestamps from Postgres on Android API 24+, without java.time desugaring. */
+// parse supabase timestamps
 private fun parseSupabaseTime(iso: String): Long {
-    // PostgreSQL can return microseconds; SimpleDateFormat expects milliseconds.
+    // cut microseconds to millis
     val text = iso.trim().replace(Regex("(\\.\\d{3})\\d+"), "$1")
     val patterns = listOf(
         "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
@@ -155,18 +155,18 @@ private fun parseSupabaseTime(iso: String): Long {
             if (parsed != null) return parsed.time
         } catch (_: Exception) { }
     }
-    // Invalid timestamps should never become usable tickets.
+    // bad timestamp = not usable
     return 0L
 }
 
-/** Read-only ticket queries. Existing RLS policies restrict user records. */
+// loads tickets (RLS only returns the user's own)
 class TicketRepository {
-    private val client = SupabaseClient.client // same authenticated client used by login and booking
+    private val client = SupabaseClient.client
 
-    /** Only return usable QR passes to QRPassActivity. */
+    // only usable passes
     suspend fun loadActivePasses(): List<TransitPass> = loadTicketOverview().active
 
-    /** Refresh an open passenger QR screen after the separate gate device scans it. */
+    // refresh after the gate scans it
     suspend fun getTicketUsage(ticketId: Int): TicketUsageStatus? {
         val rows = client.postgrest.from("tickets")
             .select { filter { eq("ticket_id", ticketId) } }
@@ -175,7 +175,7 @@ class TicketRepository {
         return TicketUsageStatus(row.status, row.usedAt?.let(::parseSupabaseTime), row.enteredAt?.let(::parseSupabaseTime))
     }
 
-    /** Shows active and scanned tickets using existing ticket/transaction/payment RLS. */
+    // active + scanned tickets
     suspend fun loadTicketOverview(): TicketOverview {
         val uid = client.auth.currentUserOrNull()?.id
             ?: throw IllegalStateException("Not signed in. Please sign in to view your tickets.")
@@ -186,8 +186,7 @@ class TicketRepository {
         if (paidTransactions.isEmpty()) return TicketOverview(emptyList(), emptyList())
         val transactionMap = paidTransactions.associateBy { it.transactionId }
 
-        // Existing policies ensure a buyer can read only their own tickets.
-        // Do NOT filter 'unused' at query time, or scanned passes will disappear.
+        // don't filter by 'unused' here or scanned ones disappear
         val dbTickets = client.postgrest.from("tickets").select().decodeList<TicketDb>()
         val now = System.currentTimeMillis()
         val relevant = dbTickets.filter { row ->

@@ -23,7 +23,6 @@ private data class TripTransaction(
     val totalAmount: Double = 0.0
 )
 
-/** The payment row of a booking (for the receipt's reference no. and paid time). */
 @Serializable
 private data class TripPayment(
     @SerialName("transaction_id")
@@ -44,12 +43,21 @@ private data class TripTicket(
     val originId: Int,
     @SerialName("destination_id")
     val destinationId: Int,
-    val fare: Double
+    val fare: Double,
+    @SerialName("discount_id")
+    val discountId: Int = 0
+)
+
+@Serializable
+private data class TripDiscount(
+    @SerialName("discount_id")
+    val discountId: Int,
+    val type: String
 )
 
 data class TripHistoryStats(
     val totalTrips: Int = 0,
-    val frequentRoute: String = "No trips yet" // now holds the most used LINE, e.g. "LRT-2"
+    val frequentRoute: String = "No trips yet" // most used line
 )
 
 data class TripHistoryItem(
@@ -59,18 +67,22 @@ data class TripHistoryItem(
     val fare: String,
     val origin: String = "",
     val destination: String = "",
-    // For opening the receipt when the card is tapped
+    // for the receipt
     val transactionId: Int = 0,
-    val totalAmount: Double = 0.0,   // whole booking (all passengers)
+    val totalAmount: Double = 0.0,
     val referenceNo: String = "",
     val paidAtMillis: Long = 0L,
-    val passengers: Int = 1
+    val passengers: Int = 1,
+    val regularCount: Int = 0,
+    val studentCount: Int = 0,
+    val seniorCount: Int = 0,
+    val pwdCount: Int = 0
 )
 
-/** Reads a Supabase timestamp like 2026-10-16T05:48:39.747733+00:00 (null if it can't). */
+// parse supabase timestamps
 private fun parseSupabaseTime(value: String?): Date? {
     if (value.isNullOrBlank()) return null
-    val cleaned = value.replace(Regex("\\.\\d+"), "") // drop fractions of a second
+    val cleaned = value.replace(Regex("\\.\\d+"), "")
     for (pattern in listOf("yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ssX", "yyyy-MM-dd'T'HH:mm:ss'Z'")) {
         try {
             val parser = SimpleDateFormat(pattern, Locale.US).apply {
@@ -127,9 +139,9 @@ class TripHistoryRepository {
             tickets.addAll(transactionTickets)
         }
 
-        // Most used line this month: count each paid booking once (not once per passenger)
+        // most used line this month (per booking)
         val frequentLineId = tickets
-            .distinctBy { it.transactionId }      // one ticket per booking is enough
+            .distinctBy { it.transactionId }
             .groupingBy { it.lineId }
             .eachCount()
             .maxByOrNull { it.value }
@@ -172,6 +184,14 @@ class TripHistoryRepository {
             .decodeList<Station>()
             .associateBy { it.stationId }
 
+        // discount types for the passenger count
+        val discountTypes = try {
+            client.from("discounts").select().decodeList<TripDiscount>()
+                .associate { it.discountId to it.type }
+        } catch (_: Exception) {
+            emptyMap()
+        }
+
         val history = mutableListOf<TripHistoryItem>()
 
         for (transaction in transactions) {
@@ -183,7 +203,7 @@ class TripHistoryRepository {
                 }
                 .decodeList<TripTicket>()
 
-            // Payment info for this booking (reference no. + when it was paid)
+            // payment info (ref no + paid time)
             val payment = try {
                 client.from("payments")
                     .select {
@@ -198,6 +218,8 @@ class TripHistoryRepository {
             }
             val paidAtMillis = (parseSupabaseTime(payment?.paidAt)
                 ?: parseSupabaseTime(transaction.createdAt))?.time ?: 0L
+            val typeCounts = tickets.groupingBy { discountTypes[it.discountId] ?: "none" }.eachCount()
+
             val bookingTotal = if (transaction.totalAmount > 0) {
                 transaction.totalAmount
             } else {
@@ -224,7 +246,7 @@ class TripHistoryRepository {
 
                 val formattedDate = try {
                     val inputFormats = listOf(
-                        "yyyy-MM-dd'T'HH:mm:ssXXX", // e.g. 2026-10-16T05:48:39+00:00
+                        "yyyy-MM-dd'T'HH:mm:ssXXX",
                         "yyyy-MM-dd'T'HH:mm:ss.SSSX",
                         "yyyy-MM-dd'T'HH:mm:ssX",
                         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
@@ -243,7 +265,7 @@ class TripHistoryRepository {
                                 timeZone = TimeZone.getTimeZone("UTC")
                             }
 
-                            // Remove the fraction of a second (".747733"), which SimpleDateFormat can't read
+                            // SimpleDateFormat can't read the microseconds
                             val cleaned = transaction.createdAt.replace(Regex("\\.\\d+"), "")
                             parsedDate = parser.parse(cleaned)
 
@@ -279,7 +301,11 @@ class TripHistoryRepository {
                         totalAmount = bookingTotal,
                         referenceNo = payment?.referenceNo.orEmpty(),
                         paidAtMillis = paidAtMillis,
-                        passengers = tickets.size
+                        passengers = tickets.size,
+                        regularCount = typeCounts["none"] ?: 0,
+                        studentCount = typeCounts["student"] ?: 0,
+                        seniorCount = typeCounts["senior"] ?: 0,
+                        pwdCount = typeCounts["pwd"] ?: 0
                     )
                 )
             }

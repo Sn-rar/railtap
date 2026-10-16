@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Main screen (DashboardActivity): the 4 tabs (Home, Tickets, Lines, Account) are
-    fragments shown inside tabContainer. The bottom bar lives here ONCE, so it never
-    redraws when switching tabs.
--->
+<!-- tabs go in tabContainer, bottom nav stays here -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

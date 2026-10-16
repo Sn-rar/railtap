@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Styles for the shared bottom navigation bar (layout_bottom_nav.xml) -->
+<!-- bottom nav styles -->
 <resources>
-    <!-- One tab: icon on top, label below, equal width -->
+    <!-- one tab -->
     <style name="BottomNavTab">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">match_parent</item>

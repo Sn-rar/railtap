@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Purple header for TAB screens (e.g. Lines): centered white title, no back arrow.
-    Same look and height as layout_purple_header.xml.
--->
+<!-- purple header, no back button -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

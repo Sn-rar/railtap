@@ -16,14 +16,13 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
         lifecycleScope.launch {
-            // Show the splash for 3 seconds while checking for a saved login at the same time
+            // show splash for 3s while checking login
             val minSplash = async { delay(3000) }
 
-            // Supabase remembers the login on the phone after signing in.
-            // Wait until it has finished loading that saved login (max 5 seconds).
+            // wait for the saved session to load (max 5s)
             val status = withTimeoutOrNull(5000) {
                 SupabaseClient.client.auth.sessionStatus.first { it != SessionStatus.Initializing }
             }
@@ -31,19 +30,17 @@ class SplashActivity : AppCompatActivity() {
 
             val loggedIn = when (status) {
                 is SessionStatus.Authenticated -> true
-                // Saved login exists but couldn't refresh (e.g. no internet): still let them in
+                // offline but has a session, let them in
                 is SessionStatus.RefreshFailure -> true
                 else -> SupabaseClient.client.auth.currentSessionOrNull() != null
             }
 
-            // Gate scanner accounts -> QR scanner (Cat's ScannerOnlyRole).
-            // Logged in before -> straight to Home. Otherwise -> Login screen.
+            // scanner -> gate scanner, logged in -> home, else login
             val next = when {
                 loggedIn && ScannerOnlyRole.isScanner() -> GateScannerActivity::class.java
                 loggedIn -> DashboardActivity::class.java
                 else -> LogInActivity::class.java
             }
-            // Fade into the next screen (no sliding), then remove the splash from the back stack
             startWithFade(Intent(this@SplashActivity, next), fadeMs = 300)
             finishWithoutAnimation()
         }

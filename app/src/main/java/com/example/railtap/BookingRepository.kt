@@ -43,7 +43,7 @@ data class BookingResult(
 // ---------- Repository ----------
 
 class BookingRepository(
-    private val client: io.github.jan.supabase.SupabaseClient = SupabaseClient.client  // same client used for login
+    private val client: io.github.jan.supabase.SupabaseClient = SupabaseClient.client
 ) {
 
     /** All stations of a line, ordered from first to last stop. */
@@ -58,7 +58,7 @@ class BookingRepository(
             .sortedBy { it.position }
     }
 
-    /** Discount type -> percent, e.g. {"none":0,"student":50,"senior":50}. */
+    /** Discount type -> percent */
     suspend fun getDiscounts(): Map<String, Int> =
         client.postgrest.from("discounts")
             .select()
@@ -106,11 +106,7 @@ class BookingRepository(
             }
         ).decodeSingle<BookingResult>()
 
-    /**
-     * Marks a booking as paid after PayPal says COMPLETED.
-     * Sets transaction + payment status to 'paid', saves the PayPal order ID,
-     * and starts the 24-hour ticket validity from now.
-     */
+    /** Mark booking as paid after paypal succeeds (also starts the 24h ticket timer) */
     suspend fun markBookingPaid(transactionId: Int, paypalOrderId: String) {
         client.postgrest.rpc(
             "mark_booking_paid",

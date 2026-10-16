@@ -122,7 +122,7 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Error message (hidden until there's a problem) -->
+            <!-- error text -->
 
 
             <!-- Password Input -->

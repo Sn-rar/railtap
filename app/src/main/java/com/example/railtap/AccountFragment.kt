@@ -24,7 +24,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import java.io.ByteArrayOutputStream
 
-/** Account tab. Layout: fragment_account.xml */
+// Account tab
 class AccountFragment : TabFragment(R.layout.fragment_account) {
 
     private companion object {
@@ -48,7 +48,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
     }
 
     private fun bindUser() {
-        // Name saved during sign up (falls back to the email)
+        // use the name from sign up, or the email if there isn't one
         val user = SupabaseClient.client.auth.currentUserOrNull()
         val fullName = user?.userMetadata?.get("full_name")?.jsonPrimitive?.content
         val displayName = fullName ?: user?.email ?: "Guest"
@@ -68,7 +68,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
 
     // ---------- Profile picture ----------
 
-    /** Shows a bitmap in the avatar circle. */
+    // put the photo in the avatar circle
     private fun showAvatar(bitmap: Bitmap) {
         findViewById<ImageView>(R.id.ivAvatar).apply {
             setPadding(0, 0, 0, 0)
@@ -79,7 +79,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
         }
     }
 
-    /** Loads the saved avatar (if any) when the screen opens. */
+    // load saved profile pic
     private fun loadAvatar() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -97,12 +97,12 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
                 }
                 if (bitmap != null) showAvatar(bitmap)
             } catch (e: Exception) {
-                // Keep the default avatar if loading fails
+                // just keep the default icon
             }
         }
     }
 
-    /** Resizes, uploads to Storage, then saves the path through the RPC. */
+    // resize, upload to storage, then save the path
     private fun uploadAvatar(uri: Uri) {
         val userId = SupabaseClient.client.auth.currentUserOrNull()?.id
         if (userId == null) {
@@ -118,7 +118,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
                     return@launch
                 }
 
-                // Show it right away; the upload continues in the background
+                // show it right away while it uploads
                 showAvatar(bitmap)
 
                 val bytes = withContext(Dispatchers.IO) {
@@ -138,7 +138,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
                     buildJsonObject { put("p_path", path) }
                 )
 
-                ProfileAvatar.cached = bitmap // so Home shows the new photo right away
+                ProfileAvatar.cached = bitmap // so home updates too
                 toast("Profile photo updated")
             } catch (e: Exception) {
                 toast("Upload failed. Please try again.")
@@ -146,7 +146,7 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
         }
     }
 
-    /** Decodes the picked image, scaled down so the longest side is AVATAR_MAX_SIZE. */
+    // shrink the picked image so it's not huge
     private fun decodeScaled(uri: Uri): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         contentResolver.openInputStream(uri)?.use {
@@ -192,13 +192,13 @@ class AccountFragment : TabFragment(R.layout.fragment_account) {
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Logout") { _, _ ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    ProfileAvatar.clear() // forget this user's photo
+                    ProfileAvatar.clear()
                     try {
                         SupabaseClient.client.auth.signOut()
                     } catch (e: Exception) {
-                        // Still go to login even if the network call fails
+                        // go to login anyway
                     }
-                    // Open Login and clear all screens behind it
+                    // back to login, clear everything behind it
                     startActivity(Intent(requireContext(), LogInActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     })

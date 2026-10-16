@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Shared bottom navigation bar, used by every screen with:
-        <include layout="@layout/layout_bottom_nav" ... />
-    The active tab is highlighted in code by setupBottomNav() in BottomNav.kt.
-    Sizes come from dimens.xml, so it adapts to small phones, normal phones and tablets.
--->
+<!-- bottom nav (active tab is set in BottomNav.kt) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"

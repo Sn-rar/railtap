@@ -10,11 +10,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
-/**
- * Trip History page: a card for every paid trip, newest first.
- * Purple header like the Booking screen (layout_purple_header.xml); LegalBaseActivity fills in the title + back button.
- * Layouts: res/layout/activity_trip_history.xml + item_trip_history.xml (one card)
- */
+// Trip history: one card per paid booking
 class TripHistoryActivity : LegalBaseActivity() {
     override val screenLayout = R.layout.activity_trip_history
     override val screenTitle = "Trip History"
@@ -22,7 +18,7 @@ class TripHistoryActivity : LegalBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // White status bar icons (clock, battery) on the purple header
+        // white status bar icons
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
     }
 
@@ -46,7 +42,7 @@ class TripHistoryActivity : LegalBaseActivity() {
                 if (trips.isEmpty()) {
                     showEmptyState("No trips yet", "Trips you pay for will show up here.")
                 } else {
-                    // One card per booking (a 3-passenger booking would otherwise show 3 identical cards)
+                    // one card per booking
                     trips.distinctBy { if (it.transactionId > 0) it.transactionId else it.hashCode() }
                         .forEach { historyList.addView(makeTripCard(it, historyList)) }
                 }
@@ -61,11 +57,9 @@ class TripHistoryActivity : LegalBaseActivity() {
         }
     }
 
-    /** Builds one trip card from item_trip_history.xml. */
     private fun makeTripCard(trip: TripHistoryItem, parent: LinearLayout): View {
         val card = LayoutInflater.from(this).inflate(R.layout.item_trip_history, parent, false)
 
-        // If the repository didn't give origin/destination separately, split "A → B"
         val parts = trip.route.split("→").map { it.trim() }
         val origin = trip.origin.ifEmpty { parts.getOrElse(0) { "--" } }
         val destination = trip.destination.ifEmpty { parts.getOrElse(1) { "--" } }
@@ -73,7 +67,7 @@ class TripHistoryActivity : LegalBaseActivity() {
         card.findViewById<TextView>(R.id.tripOrigin).text = origin
         card.findViewById<TextView>(R.id.tripDestination).text = destination
 
-        // Line pill: green for LRT-1, purple for LRT-2 (same as the receipt)
+        // green = LRT-1, purple = LRT-2
         val pill = card.findViewById<TextView>(R.id.tripLine)
         pill.text = trip.line
         if (trip.line.contains("1")) {
@@ -81,7 +75,7 @@ class TripHistoryActivity : LegalBaseActivity() {
             pill.setTextColor(ContextCompat.getColor(this, R.color.green_line))
         }
 
-        // Tap the card to see this booking's receipt
+        // tap -> receipt
         card.setOnClickListener {
             ReceiptActivity.open(
                 from = this,
@@ -91,7 +85,11 @@ class TripHistoryActivity : LegalBaseActivity() {
                 destination = destination,
                 referenceNo = trip.referenceNo.ifEmpty { "--" },
                 paidAtMillis = trip.paidAtMillis.takeIf { it > 0 } ?: System.currentTimeMillis(),
-                fromHistory = true
+                fromHistory = true,
+                regular = trip.regularCount,
+                student = trip.studentCount,
+                senior = trip.seniorCount,
+                pwd = trip.pwdCount
             )
         }
         return card

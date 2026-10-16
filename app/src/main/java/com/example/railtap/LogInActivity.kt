@@ -17,14 +17,14 @@ class LogInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
         // 1. Find the views by their IDs from the XML layout
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signInButton)
         val signUpLink = findViewById<TextView>(R.id.signUpLink)
-        val passwordError = findViewById<TextView>(R.id.passwordError) // red text above the password box
+        val passwordError = findViewById<TextView>(R.id.passwordError)
         hideErrorWhenTyping(passwordError, emailInput, passwordInput)
 
         // 2. Set click listener for the Sign In button
@@ -64,11 +64,11 @@ class LogInActivity : AppCompatActivity() {
                             msg.contains("credentials", ignoreCase = true) ->
                             passwordError.showError("Incorrect email or password")
 
-                        // Account made but email not confirmed yet
+                        // email not confirmed yet
                         msg.contains("not confirmed", ignoreCase = true) ->
                             passwordError.showError("Please confirm your email first, then sign in")
 
-                        // Anything else (e.g. no internet)
+                        // anything else (no internet etc.)
                         else -> Toast.makeText(
                             this@LogInActivity,
                             "Sign in failed: $msg",
@@ -80,7 +80,7 @@ class LogInActivity : AppCompatActivity() {
             }
         }
 
-        // "Forgot password?" opens the Forgot Password page (with the email pre-filled)
+        // forgot password
         findViewById<TextView>(R.id.forgotPasswordText).setOnClickListener {
             startActivity(Intent(this, ForgotPasswordActivity::class.java).apply {
                 putExtra(ForgotPasswordActivity.EXTRA_EMAIL, emailInput.text.toString().trim())

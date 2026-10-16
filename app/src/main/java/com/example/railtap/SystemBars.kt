@@ -8,20 +8,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 
-/**
- * Keeps the screen's content out from under the status bar (top) and the
- * navigation / gesture bar (bottom).
- *
- * Needed because the app targets a new Android version, which draws apps
- * "edge-to-edge" (behind the system bars) on Android 15 and newer.
- *
- * Call it in onCreate right after setContentView:
- *   applySystemBarPadding()
- */
+// keeps content from going under the status/nav bars (edge-to-edge on Android 15+)
 fun Activity.applySystemBarPadding() {
     WindowCompat.setDecorFitsSystemWindows(window, false)
 
-    // Dark status bar icons (clock, battery), since the app backgrounds are light
+    // dark status bar icons
     WindowCompat.getInsetsController(window, window.decorView).apply {
         isAppearanceLightStatusBars = true
         isAppearanceLightNavigationBars = true
@@ -31,9 +22,7 @@ fun Activity.applySystemBarPadding() {
     val startTop = root.paddingTop
     val startBottom = root.paddingBottom
 
-    // Tab screens: the white bottom bar itself stretches down behind the phone's
-    // navigation/gesture area (same as the Account screen), so the bar looks
-    // identical on every tab and doesn't jump when switching.
+    // bottom nav goes behind the gesture bar so it looks the same everywhere
     val bottomNav = findViewById<View>(R.id.bottomNav)?.takeIf { it.parent === root }
     val navStartBottom = bottomNav?.paddingBottom ?: 0
 
@@ -41,7 +30,7 @@ fun Activity.applySystemBarPadding() {
         val bars = insets.getInsets(
             WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
         )
-        val ime = insets.getInsets(WindowInsetsCompat.Type.ime()) // keyboard
+        val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
         if (bottomNav != null) {
             bottomNav.updatePadding(bottom = navStartBottom + bars.bottom)
             view.updatePadding(top = startTop + bars.top, bottom = startBottom + ime.bottom)

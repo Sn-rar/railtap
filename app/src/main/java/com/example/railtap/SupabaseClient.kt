@@ -11,8 +11,7 @@ object SupabaseClient {
         supabaseKey = "sb_publishable_30pXYndCG5wnGoG14UQPOw_vgIoXwLO"
     ) {
         install(Auth) {
-            // Links from Supabase emails (e.g. password reset) open the app with
-            // railtap://reset-password — see ResetPasswordActivity in AndroidManifest.xml
+            // for the password reset link (railtap://reset-password)
             scheme = "railtap"
             host = "reset-password"
         }

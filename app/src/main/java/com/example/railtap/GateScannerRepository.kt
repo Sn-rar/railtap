@@ -18,7 +18,7 @@ data class GateScanResult(
 class GateScannerRepository {
     private val client = SupabaseClient.client
 
-    /** Supabase performs both status checks and the database update atomically. */
+    // supabase does the checks + update in one go
     suspend fun scan(qrToken: String): GateScanResult {
         check(client.auth.currentUserOrNull() != null) { "Sign in with the scanner account" }
         return client.postgrest.rpc("auto_scan_ticket_at_gate", buildJsonObject {

@@ -36,7 +36,7 @@ class BookingActivity : AppCompatActivity() {
 
     private val repo = BookingRepository()
     private val peso: NumberFormat =
-        NumberFormat.getCurrencyInstance(Locale("en", "PH"))
+        NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-PH"))
 
     // ---- State ----
     private var lineCode = ""
@@ -84,7 +84,7 @@ class BookingActivity : AppCompatActivity() {
             return
         }
         setContentView(R.layout.activity_booking)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
         setupBottomNav(this, NavTab.HOME)
 
         val line = intent.getStringExtra(EXTRA_LINE)
@@ -100,8 +100,7 @@ class BookingActivity : AppCompatActivity() {
             finish()
             return
         }
-        // The database stores codes as "LRT1"/"LRT2" (no hyphen), while the
-        // intent passes "LRT-1"/"LRT-2". Normalize before querying.
+        // db uses LRT1/LRT2 (no dash)
         lineCode = line.replace("-", "")
 
         setupPayment()
@@ -192,7 +191,7 @@ class BookingActivity : AppCompatActivity() {
         val options = stations.filter { it.stationId != exclude?.stationId }
         if (options.isEmpty()) {
             toast("No stations loaded. Retrying…")
-            loadInitialData() // retry so the real error shows up
+            loadInitialData() // try again
             return
         }
         MaterialAlertDialogBuilder(this)
@@ -244,8 +243,7 @@ class BookingActivity : AppCompatActivity() {
     // ------------------------------------------------------------------
 
     private fun setupPayment() {
-        // PayPal is the only payment option, so there's nothing to "Change" to.
-        // (The other wallet option was removed from activity_booking.xml.)
+        // paypal only, so hide "Change"
         findViewById<View>(R.id.btnChangePayment)?.visibility = View.GONE
     }
 
@@ -253,7 +251,7 @@ class BookingActivity : AppCompatActivity() {
     // Pricing
     // ------------------------------------------------------------------
 
-    /** Same rounding as the SQL function: base * (100 - pct) / 100, 2 dp. */
+    // same rounding as the sql function
     private fun fareFor(type: String): BigDecimal? {
         val base = baseFare ?: return null
         val pct = discounts[type] ?: 0
@@ -340,7 +338,7 @@ class BookingActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                // Server recomputes every fare; the app total is only a preview.
+                // server computes the real total, this is just a preview
                 val result = repo.createBooking(
                     lineCode, o, d, countRegular, countStudent, countSenior
                 )
@@ -355,28 +353,20 @@ class BookingActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * A pending transaction, its tickets, and a pending PayPal payment now exist.
-     * Create a PayPal (sandbox) order for the server's total and open it in a browser tab.
-     * PayPal then sends the user back to onNewIntent() below.
-     */
+    // make a paypal order for the total and open it in the browser
     private suspend fun openPayment(result: BookingResult) {
         pendingBooking = result
-        // PayPal wants the amount as text with 2 decimals, e.g. "45.00"
+        // paypal wants "45.00" format
         val amount = BigDecimal.valueOf(result.totalAmount)
             .setScale(2, RoundingMode.HALF_UP).toPlainString()
 
-        val approveUrl = withContext(Dispatchers.IO) {   // network call, off the main thread
+        val approveUrl = withContext(Dispatchers.IO) {
             PayPalHelper.createOrder(amount, result.referenceNo)
         }
         CustomTabsIntent.Builder().build().launchUrl(this, Uri.parse(approveUrl))
     }
 
-    /**
-     * PayPal sends the user back here with railtap://paypal/return?token=ORDER_ID
-     * (or railtap://paypal/cancel). Works because of the intent-filter and
-     * launchMode="singleTop" in AndroidManifest.xml.
-     */
+    // paypal comes back here (railtap://paypal/return or /cancel)
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -398,12 +388,11 @@ class BookingActivity : AppCompatActivity() {
                 if (status == "COMPLETED") {
                     val booking = pendingBooking
                     if (booking != null) {
-                        // Mark the booking as paid in Supabase
+                        // mark as paid in supabase
                         try {
                             repo.markBookingPaid(booking.transactionId, orderId)
                         } catch (e: Exception) {
-                            // PayPal already took the money, so still show the receipt,
-                            // but tell the user the booking couldn't be updated.
+                            // money already went through so still show the receipt
                             toast("Paid, but couldn't update booking: ${e.message}")
                         }
 
@@ -413,9 +402,12 @@ class BookingActivity : AppCompatActivity() {
                             lineCode = lineCode,
                             origin = origin?.name ?: "--",
                             destination = destination?.name ?: "--",
-                            referenceNo = booking.referenceNo
+                            referenceNo = booking.referenceNo,
+                            regular = countRegular,
+                            student = countStudent,
+                            senior = countSenior
                         )
-                        finish() // so "back" from the receipt doesn't return to booking
+                        finish()
                     } else {
                         toast("Payment successful!")
                     }

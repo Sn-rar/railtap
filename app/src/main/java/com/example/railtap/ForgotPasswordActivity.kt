@@ -11,19 +11,14 @@ import com.google.android.material.textfield.TextInputEditText
 import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 
-/**
- * Forgot Password page.
- * The user types their email, and Supabase emails them a reset link.
- * Tapping that link on the phone opens ResetPasswordActivity (railtap://reset-password).
- * Layout: res/layout/activity_forgot_password.xml
- */
+// Forgot password: sends a reset link to their email
 class ForgotPasswordActivity : AppCompatActivity() {
 
     companion object {
-        /** Used by the Login screen to pre-fill the email the user already typed. */
+        // email from the login screen
         const val EXTRA_EMAIL = "extra_email"
 
-        /** Where the link in the email sends the user (must match AndroidManifest.xml). */
+        // must match the manifest
         const val RESET_REDIRECT_URL = "railtap://reset-password"
     }
 
@@ -34,9 +29,9 @@ class ForgotPasswordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
+        applySystemBarPadding()
 
-        // Pre-fill the email from the Login screen, if there was one
+        // prefill email from login
         intent.getStringExtra(EXTRA_EMAIL)?.let { emailInput.setText(it) }
         hideErrorWhenTyping(emailError, emailInput)
 
@@ -85,7 +80,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
     }
 
-    /** Swap the form for the "Check your email" message. */
+    // show "check your email"
     private fun showLinkSent(email: String) {
         findViewById<View>(R.id.emailForm).visibility = View.GONE
         findViewById<View>(R.id.sentCard).visibility = View.VISIBLE

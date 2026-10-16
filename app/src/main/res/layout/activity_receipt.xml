@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Payment receipt shown after a successful PayPal payment (ReceiptActivity.kt) -->
+<!-- receipt -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -58,7 +58,7 @@
         app:layout_constraintTop_toBottomOf="@id/topBarDivider"
         app:layout_constraintWidth_max="@dimen/content_max_width">
 
-        <!-- This whole block is what gets saved when "Download Receipt" is tapped -->
+        <!-- this part gets saved on download -->
         <LinearLayout
             android:id="@+id/receiptContent"
             android:layout_width="match_parent"
@@ -321,6 +321,16 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/lblTotalFare" />
 
+                    <!-- passenger counts (filled in code) -->
+                    <LinearLayout
+                        android:id="@+id/receiptPassengers"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lblTotalFare" />
+
                     <TextView
                         android:id="@+id/lblDateTime"
                         android:layout_width="wrap_content"
@@ -331,7 +341,7 @@
                         android:textColor="#6B7280"
                         android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/lblTotalFare" />
+                        app:layout_constraintTop_toBottomOf="@id/receiptPassengers" />
 
                     <TextView
                         android:id="@+id/tvReceiptDateTime"
@@ -403,7 +413,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- ===== Bottom buttons (always visible) ===== -->
+    <!-- buttons -->
     <LinearLayout
         android:id="@+id/receiptButtons"
         android:layout_width="0dp"

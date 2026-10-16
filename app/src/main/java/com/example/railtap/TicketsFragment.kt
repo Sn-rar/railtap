@@ -14,11 +14,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.graphics.drawable.GradientDrawable
-import android.view.Gravity
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -29,11 +24,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-/**
- * Tickets tab: active passes + completed (scanned) journeys from Supabase
- * (Cat's TicketRepository), refreshed every 30 seconds while visible.
- * Tapping a pass opens its QR (QRPassActivity). Layout: fragment_tickets.xml
- */
+// Tickets tab, refreshes every 30s
 class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
     private val repo = TicketRepository()
     private var passes: List<TransitPass> = emptyList()
@@ -47,8 +38,8 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
 
     private val refresher = object : Runnable {
         override fun run() {
-            renderPasses()                 // countdown and expiry change immediately
-            fetchPassesFromDatabase()      // also check server for used/paid tickets
+            renderPasses()
+            fetchPassesFromDatabase()
             handler.postDelayed(this, 30_000L)
         }
     }
@@ -77,17 +68,16 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
 
     override fun onTabHidden() {
         handler.removeCallbacks(refresher)
-        // Don't cancel loadJob here: cancellation is normal when the screen changes,
-        // and an interrupted request must not be shown as a database error.
+        // don't cancel loadJob here, it's not an error
     }
 
     override fun onDestroyView() {
-        handler.removeCallbacks(refresher) // stop the 30-second refresh when the tab's view is gone
+        handler.removeCallbacks(refresher)
         super.onDestroyView()
     }
 
     private fun fetchPassesFromDatabase() {
-        // One request at a time; don't continually cancel an in-flight request.
+        // one request at a time
         if (loadJob?.isActive == true) return
         loadJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -98,18 +88,18 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
                 loadError = null
                 renderPasses()
             } catch (cancelled: CancellationException) {
-                throw cancelled // normal lifecycle cancellation is NOT a load error
+                throw cancelled
             } catch (e: Exception) {
                 Log.e("RailTapTickets", "Couldn't load active tickets", e)
                 loadError = e.message ?: e.javaClass.simpleName
-                renderPasses() // preserve previously loaded tickets on transient errors
+                renderPasses() // keep old tickets on error
             }
         }
     }
 
     private fun renderPasses() {
         renderScannedTickets()
-        // Every passenger must still be valid. A group can contain more than one.
+        // only keep valid tickets
         val now = System.currentTimeMillis()
         val validPasses = passes.mapNotNull { pass ->
             val validTickets = pass.tickets.filter { it.status == "entered" || (it.status == "unused" && it.expiresAtMillis > now) }
@@ -152,7 +142,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
                     action.text = "Buy Ticket  →"
                     action.isEnabled = true
                     action.setOnClickListener {
-                        showTab(NavTab.HOME) // pick a line on Home to book
+                        showTab(NavTab.HOME)
                     }
                 }
             }
@@ -166,7 +156,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         adapter.update(validPasses.drop(1))
     }
 
-    /** A separate non-clickable history section; scanned tickets cannot show a usable QR. */
+    // completed journeys section
     private fun setupScannedSection() {
         val scroll = findViewById<ScrollView>(R.id.dashboardScroll)
         val content = scroll.getChildAt(0) as LinearLayout
@@ -189,54 +179,45 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         scannedSection.addView(TextView(requireContext()).apply {
             text = "COMPLETED JOURNEYS"
             textSize = 13f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            typeface = androidx.core.content.res.ResourcesCompat.getFont(requireContext(), R.font.plus_jakarta_sans_bold)
             setTextColor(Color.parseColor("#182138"))
             setPadding(dp(4), 0, 0, dp(12))
         })
-        val stampFormat = SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.getDefault())
+        // same card as trip history, tap for receipt
+        val inflater = android.view.LayoutInflater.from(requireContext())
         for (pass in scannedPasses) {
-            for (ticket in pass.tickets) {
-                val card = LinearLayout(requireContext()).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(dp(18), dp(16), dp(18), dp(16))
-                    background = GradientDrawable().apply {
-                        setColor(Color.WHITE)
-                        cornerRadius = dp(15).toFloat()
-                        setStroke(dp(1), Color.parseColor("#CCE5D8"))
-                    }
-                    elevation = dp(1).toFloat()
-                }
-                card.addView(TextView(requireContext()).apply {
-                    text = "✓  JOURNEY COMPLETED"
-                    textSize = 13f
-                    setTypeface(typeface, android.graphics.Typeface.BOLD)
-                    setTextColor(Color.parseColor("#00875A"))
-                    gravity = Gravity.START
-                })
-                card.addView(TextView(requireContext()).apply {
-                    text = "${pass.lineName}  •  ${pass.origin} → ${pass.destination}"
-                    textSize = 14f
-                    setTypeface(typeface, android.graphics.Typeface.BOLD)
-                    setTextColor(Color.parseColor("#0B1A30"))
-                    setPadding(0, dp(8), 0, dp(4))
-                })
-                card.addView(TextView(requireContext()).apply {
-                    val time = ticket.scannedAtMillis?.takeIf { it > 0L }?.let {
-                        stampFormat.format(Date(it))
-                    } ?: "Time unavailable"
-                    val entered = ticket.enteredAtMillis?.takeIf { it > 0L }?.let {
-                        stampFormat.format(Date(it))
-                    } ?: "Not recorded (older ticket)"
-                    text = "Ticket #${ticket.ticketId}  •  ${ticket.fareType}\nEntered: $entered\nExited: $time"
-                    textSize = 12f
-                    setTextColor(Color.parseColor("#62718A"))
-                })
-                scannedSection.addView(card, LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply { bottomMargin = dp(12) })
+            val card = inflater.inflate(R.layout.item_trip_history, scannedSection, false)
+            card.setOnClickListener { openReceipt(pass) }
+
+            card.findViewById<TextView>(R.id.tripOrigin).text = pass.origin
+            card.findViewById<TextView>(R.id.tripDestination).text = pass.destination
+
+            val pill = card.findViewById<TextView>(R.id.tripLine)
+            pill.text = pass.lineName
+            if (pass.lineName.contains("1")) {
+                pill.setBackgroundResource(R.drawable.bg_pill_green)
+                pill.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.green_line))
             }
+            scannedSection.addView(card)
         }
+    }
+
+    private fun openReceipt(pass: TransitPass) {
+        val activity = activity as? androidx.appcompat.app.AppCompatActivity ?: return
+        ReceiptActivity.open(
+            from = activity,
+            total = pass.tickets.sumOf { it.fare },
+            lineCode = pass.lineName,
+            origin = pass.origin,
+            destination = pass.destination,
+            referenceNo = pass.referenceNo.ifEmpty { "--" },
+            paidAtMillis = pass.purchasedAtMillis.takeIf { it > 0 } ?: System.currentTimeMillis(),
+            fromHistory = true,
+            regular = pass.tickets.count { it.fareType == "Regular" },
+            student = pass.tickets.count { it.fareType == "Student" },
+            senior = pass.tickets.count { it.fareType == "Senior Citizen" },
+            pwd = pass.tickets.count { it.fareType == "PWD" }
+        )
     }
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density + 0.5f).toInt()
