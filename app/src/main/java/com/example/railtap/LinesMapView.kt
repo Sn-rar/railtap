@@ -148,7 +148,14 @@ class LinesMapView @JvmOverloads constructor(
     private val values = FloatArray(9)
     private var fitScale = 1f
     private var animator: ValueAnimator? = null
-    private val maxZoom = 8f
+
+    /** Zoom limits as multiples of the full-map fit scale (1.0 = whole map fits the screen). */
+    private val minZoomFactor = 2f      // most zoomed out
+    private val maxZoomFactor = 6f        // most zoomed in
+    private val defaultZoom = 4f          // opening zoom; keep between min and max
+
+    private fun minScale() = fitScale * minZoomFactor
+    private fun maxScale() = fitScale * maxZoomFactor
 
     private fun currentScale(): Float { mapMatrix.getValues(values); return values[Matrix.MSCALE_X] }
     private fun viewH() = (height - bottomInset).toFloat()
@@ -169,15 +176,35 @@ class LinesMapView @JvmOverloads constructor(
         resetView(false)
     }
 
+    private fun contentBounds(): RectF =
+        RectF(lineBounds(MapLine.LRT1)).apply { union(lineBounds(MapLine.LRT2)) }
+
     fun resetView(animate: Boolean = true) {
         fitScale = min(width / mapW, viewH() / mapH)
-        fitRect(RectF(0f, 0f, mapW, mapH), animate, 0f)
+        val f = defaultFocus()
+        val s = (fitScale * defaultZoom).coerceIn(minScale(), maxScale())
+        val target = Matrix().apply {
+            postScale(s, s)
+            postTranslate(width / 2f - f.x * s, viewH() / 2f - f.y * s)
+        }
+        animateTo(target, animate)
+    }
+
+    /** Point (map pixels) that should sit at the centre of the screen after a reset. */
+    private fun defaultFocus(): PointF {
+        // Option A: centre on a station by name (LinesMapData coordinates -> map pixels via labelScale)
+        val st = LinesMapData.stations.first { it.name == "Doroteo Jose" }
+        return PointF(st.x * labelScale, st.y * labelScale)
+
+        // Option B: a spot inside the content, as fractions (0 = left/top, 1 = right/bottom)
+        // val c = contentBounds()
+        // return PointF(c.left + c.width() * 0.35f, c.top + c.height() * 0.30f)
     }
 
     /** Zoom/pan so that [r] (map pixels) fills the view, leaving [padPx] screen pixels around it. */
     fun fitRect(r: RectF, animate: Boolean = true, padPx: Float = 40f * density) {
         val s = min((width - 2 * padPx) / r.width(), (viewH() - 2 * padPx) / r.height())
-            .coerceIn(fitScale, fitScale * maxZoom)
+            .coerceIn(minScale(), maxScale())
         val target = Matrix().apply {
             postScale(s, s)
             postTranslate(width / 2f - r.centerX() * s, viewH() / 2f - r.centerY() * s)
@@ -265,7 +292,7 @@ class LinesMapView @JvmOverloads constructor(
             override fun onScale(d: ScaleGestureDetector): Boolean {
                 animator?.cancel()
                 val cur = currentScale()
-                val f = (cur * d.scaleFactor).coerceIn(fitScale, fitScale * maxZoom) / cur
+                val f = (cur * d.scaleFactor).coerceIn(minScale(), maxScale()) / cur
                 mapMatrix.postScale(f, f, d.focusX, d.focusY)
                 clamp(); invalidate(); return true
             }
@@ -285,7 +312,9 @@ class LinesMapView @JvmOverloads constructor(
         }
         override fun onDoubleTap(e: MotionEvent): Boolean {
             val cur = currentScale()
-            val f = if (cur < fitScale * 2f) 2.5f else fitScale / cur
+            val target = if (cur < maxScale() * 0.6f) (cur * 2.5f).coerceAtMost(maxScale())
+            else (fitScale * defaultZoom).coerceIn(minScale(), maxScale())
+            val f = target / cur
             animateTo(Matrix(mapMatrix).apply { postScale(f, f, e.x, e.y) }, true)
             return true
         }
