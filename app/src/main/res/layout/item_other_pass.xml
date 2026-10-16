@@ -5,30 +5,26 @@
     android:id="@+id/cardContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="20dp"
     android:background="@drawable/bg_ticket_card"
-    android:elevation="2dp"
-    android:foreground="?attr/selectableItemBackground"
-    android:padding="20dp">
+    android:elevation="2dp">
 
-    <!-- Line Pill (Color and text bound dynamically) -->
     <TextView
         android:id="@+id/itemLinePill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_pill_green"
-        android:fontFamily="@font/plusjakartasans"
+        android:background="@drawable/bg_purple_pill"
         android:paddingStart="12dp"
-        android:paddingTop="4dp"
         android:paddingEnd="12dp"
-        android:paddingBottom="4dp"
-        android:text="--"
-        android:textColor="@android:color/white"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="LRT-2"
         android:textSize="11sp"
         android:textStyle="bold"
+        android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Passenger Count Badge -->
     <TextView
         android:id="@+id/itemPassengerBadge"
         android:layout_width="wrap_content"
@@ -36,125 +32,139 @@
         android:background="@drawable/bg_pill_passenger"
         android:drawableStart="@drawable/ic_person"
         android:drawablePadding="6dp"
-        android:fontFamily="@font/plusjakartasans"
-        android:letterSpacing="0.05"
         android:paddingStart="12dp"
-        android:paddingTop="5dp"
+        android:paddingTop="6dp"
         android:paddingEnd="12dp"
-        android:paddingBottom="5dp"
-        android:text="-- PASSENGER"
-        android:textColor="#5E6E82"
+        android:paddingBottom="6dp"
+        android:text="1 PASSENGER"
         android:textSize="11sp"
+        android:textColor="#5E6E82"
         android:textStyle="bold"
         app:drawableTint="#5E6E82"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Origin Section -->
     <TextView
         android:id="@+id/itemOriginLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
-        android:fontFamily="@font/plusjakartasans"
-        android:letterSpacing="0.05"
         android:text="ORIGIN"
-        android:textColor="#94A3B8"
         android:textSize="11sp"
+        android:textColor="#94A3B8"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemLinePill" />
+        app:layout_constraintTop_toBottomOf="@id/itemLinePill"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/itemDestinationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DESTINATION"
+        android:textSize="11sp"
+        android:textColor="#94A3B8"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="@id/itemOriginLabel"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/itemOriginStation"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:fontFamily="@font/plusjakartasans"
-        android:lineSpacingExtra="-2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
         android:text="--"
-        android:textColor="#0B1A30"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold"
+        android:textColor="#0B1A30"
+        android:maxLines="2"
+        app:layout_constraintTop_toBottomOf="@id/itemOriginLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemOriginLabel" />
+        app:layout_constraintEnd_toStartOf="@id/itemArrow" />
 
-    <!-- Route Arrow -->
     <ImageView
         android:id="@+id/itemArrow"
         android:layout_width="38dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow_right"
-        app:layout_constraintBottom_toBottomOf="@id/itemOriginStation"
-        app:layout_constraintEnd_toStartOf="@id/itemDestinationStation"
-        app:layout_constraintStart_toEndOf="@id/itemOriginStation"
+        android:contentDescription="to destination"
         app:layout_constraintTop_toTopOf="@id/itemOriginStation"
-        app:tint="#00875A" />
-
-    <!-- Destination Section -->
-    <TextView
-        android:id="@+id/itemDestinationLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/plusjakartasans"
-        android:letterSpacing="0.05"
-        android:text="DESTINATION"
-        android:textColor="#94A3B8"
-        android:textSize="11sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/itemOriginLabel" />
+        app:layout_constraintBottom_toBottomOf="@id/itemOriginStation"
+        app:layout_constraintStart_toEndOf="@id/itemOriginStation"
+        app:layout_constraintEnd_toStartOf="@id/itemDestinationStation"
+        app:tint="#6B56C8" />
 
     <TextView
         android:id="@+id/itemDestinationStation"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:fontFamily="@font/plusjakartasans"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="4dp"
         android:text="--"
+        android:gravity="end"
+        android:textSize="17sp"
+        android:textStyle="bold"
         android:textColor="#0B1A30"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemDestinationLabel" />
+        android:maxLines="2"
+        app:layout_constraintTop_toBottomOf="@id/itemDestinationLabel"
+        app:layout_constraintStart_toEndOf="@id/itemArrow"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Expiry Label -->
-    <TextView
-        android:id="@+id/itemExpiryLabel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/plusjakartasans"
-        android:text="--"
-        android:textColor="#62718A"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@id/itemBtnShowQR"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/itemBtnShowQR" />
-
-    <!-- Show QR Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/itemBtnShowQR"
-        android:layout_width="wrap_content"
-        android:layout_height="44dp"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="#00875A"
-        android:fontFamily="@font/plusjakartasans"
-        android:letterSpacing="0.04"
-        android:paddingStart="16dp"
-        android:paddingEnd="18dp"
-        android:text="SHOW QR"
-        android:textAllCaps="true"
-        android:textColor="@android:color/white"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:cornerRadius="10dp"
-        app:icon="@drawable/ic_qr_code"
-        app:iconGravity="textStart"
-        app:iconPadding="6dp"
-        app:iconSize="16dp"
-        app:iconTint="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemOriginStation" />
+        app:layout_constraintTop_toBottomOf="@id/itemOriginStation"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <TextView
+            android:id="@+id/itemWarningBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:drawableStart="@drawable/ic_warning_red"
+            android:drawablePadding="7dp"
+            android:textColor="#B83B36"
+            android:textSize="11sp"
+            android:text="Your pass expires soon. Use it before it expires!"
+            android:background="@drawable/bg_rt_warning_inline"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/itemExpiryLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Expires in 23 hr 52 min"
+                android:textColor="#62718A"
+                android:textSize="12sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/itemBtnShowQR"
+                android:layout_width="wrap_content"
+                android:layout_height="43dp"
+                android:minWidth="100dp"
+                android:text="SHOW QR"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#6B56C8"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:cornerRadius="10dp"
+                app:icon="@drawable/ic_qr_code"
+                app:iconTint="#FFFFFF"
+                app:iconSize="16dp"
+                app:iconPadding="5dp"
+                app:iconGravity="textStart" />
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -85,5 +85,10 @@
             </intent-filter>
         </activity>
 
+        <!-- QR passes for the turnstile (from Cat's branch) -->
+        <activity
+            android:name=".QRPassActivity"
+            android:exported="false" />
+
     </application>
 </manifest>
