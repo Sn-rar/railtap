@@ -46,9 +46,16 @@ class LinesMapView @JvmOverloads constructor(
 
     /** Space at the bottom (e.g. the LRT 1 / LRT 2 pills) that the map should not be centred under. */
     var bottomInset = 0
-        set(value) { field = value; if (width > 0) resetView(false) }
+        set(value) { if (field == value) return; field = value; if (width > 0) resetView(false) }
 
     var drawLabels = true
+        set(value) { field = value; invalidate() }
+
+    /** Called when a station node is tapped (takes priority over selecting the line). */
+    var onStationTapped: ((MapStation) -> Unit)? = null
+
+    /** Stations to ring on the map, e.g. the picked origin / destination. */
+    var highlighted: List<MapStation> = emptyList()
         set(value) { field = value; invalidate() }
 
     // ---------------------------------------------------------------- layers
@@ -88,6 +95,11 @@ class LinesMapView @JvmOverloads constructor(
         } else Color.BLACK
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 28f; color = textColor }
+    private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val lineColors = mapOf(
+        MapLine.LRT1 to ContextCompat.getColor(context, R.color.green_line),
+        MapLine.LRT2 to ContextCompat.getColor(context, R.color.brand)
+    )
 
     // ---------------------------------------------------------------- dim animation
     private val lineAlpha = floatArrayOf(1f, 1f)           // index = MapLine.ordinal
@@ -136,6 +148,16 @@ class LinesMapView @JvmOverloads constructor(
                     canvas.drawText(s.name, 0f, 0f, labelPaint)
                     canvas.restore()
                 }
+            }
+            canvas.restore()
+        }
+
+        if (highlighted.isNotEmpty()) {
+            canvas.save()
+            canvas.scale(labelScale, labelScale)
+            for (st in highlighted) {                         // filled square inside the node square
+                fillPaint.color = lineColors.getValue(st.line)
+                canvas.drawRect(st.x - 6.5f, st.y - 6.5f, st.x + 6.5f, st.y + 6.5f, fillPaint)
             }
             canvas.restore()
         }
@@ -277,6 +299,18 @@ class LinesMapView @JvmOverloads constructor(
         return if (best <= rr) best else null
     }
 
+    /** Nearest open station within ~28dp of the touch point, or null. */
+    private fun stationAt(px: Float, py: Float): MapStation? {
+        mapMatrix.invert(inverse)
+        val p = floatArrayOf(px, py); inverse.mapPoints(p)
+        val maxDist = 28f * density / currentScale()          // in map pixels
+        return LinesMapData.stations
+            .filter { it.isOpen }
+            .map { it to hypot(p[0] - it.x * labelScale, p[1] - it.y * labelScale) }
+            .filter { it.second <= maxDist }
+            .minByOrNull { it.second }?.first
+    }
+
     private fun lineAt(px: Float, py: Float): MapLine? {
         mapMatrix.invert(inverse)
         val p = floatArrayOf(px, py); inverse.mapPoints(p)
@@ -306,6 +340,8 @@ class LinesMapView @JvmOverloads constructor(
             mapMatrix.postTranslate(-dx, -dy); clamp(); invalidate(); return true
         }
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            val station = stationAt(e.x, e.y)
+            if (station != null) { onStationTapped?.invoke(station); performClick(); return true }
             val hit = lineAt(e.x, e.y)
             selectedLine = if (hit == null || hit == selectedLine) null else hit
             performClick(); return true

@@ -7,7 +7,7 @@
     android:background="#F8F9FD">
 
     <!-- Header, same style as the Tickets tab. The title changes to LRT LINE 1 / 2
-         when a line pill is tapped (see LinesActivity.kt). -->
+         when a line pill is tapped (see LinesFragment.kt). -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="0dp"
@@ -46,7 +46,7 @@
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Map area -->
+    <!-- Map area (runs down behind the bottom card; the view keeps its centre above the card) -->
     <FrameLayout
         android:id="@+id/mapSheet"
         android:layout_width="0dp"
@@ -56,41 +56,75 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header">
 
-    <!-- Map. To use your own artwork add: app:baseDrawable / app:lrt1Drawable / app:lrt2Drawable
-         (and app:drawLabels="false" if the station names are already inside your layers). -->
-    <com.example.railtap.LinesMapView
-        android:id="@+id/linesMap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:drawLabels="false" />
+        <!-- Map. To use your own artwork add: app:baseDrawable / app:lrt1Drawable / app:lrt2Drawable
+             (and app:drawLabels="false" if the station names are already inside your layers). -->
+        <com.example.railtap.LinesMapView
+            android:id="@+id/linesMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:drawLabels="false" />
     </FrameLayout>
 
-    <!-- LRT 1 / LRT 2 pills: indicators + buttons -->
+    <!-- Bottom card: LRT 1 / LRT 2 pills (indicators + buttons) and the station travel-time info -->
     <LinearLayout
-        android:id="@+id/linePills"
-        android:layout_width="wrap_content"
+        android:id="@+id/bottomCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
+        android:background="@drawable/bg_card_top"
+        android:elevation="12dp"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/pillLrt1"
-            style="@style/LinesPill"
-            android:background="@drawable/bg_pill_lrt1"
-            android:contentDescription="@string/lines_pill_lrt1_desc"
-            android:text="@string/lines_pill_lrt1" />
+        <!-- Swipe zone: drag down to hide the panel, drag up / tap to bring it back -->
+        <FrameLayout
+            android:id="@+id/panelHandle"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_marginStart="-20dp"
+            android:layout_marginEnd="-20dp">
 
-        <TextView
-            android:id="@+id/pillLrt2"
-            style="@style/LinesPill"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_pill_lrt2"
-            android:contentDescription="@string/lines_pill_lrt2_desc"
-            android:text="@string/lines_pill_lrt2" />
+            <View
+                android:layout_width="40dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_handle" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/linePills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/pillLrt1"
+                style="@style/LinesPill"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pill_lrt1"
+                android:contentDescription="@string/lines_pill_lrt1_desc"
+                android:text="@string/lines_pill_lrt1" />
+
+            <TextView
+                android:id="@+id/pillLrt2"
+                style="@style/LinesPill"
+                android:layout_width="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pill_lrt2"
+                android:contentDescription="@string/lines_pill_lrt2_desc"
+                android:text="@string/lines_pill_lrt2" />
+        </LinearLayout>
+
+        <include layout="@layout/view_travel_info" />
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
