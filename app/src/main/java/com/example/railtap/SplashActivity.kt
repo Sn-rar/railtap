@@ -36,8 +36,13 @@ class SplashActivity : AppCompatActivity() {
                 else -> SupabaseClient.client.auth.currentSessionOrNull() != null
             }
 
-            // Logged in before -> go straight to Home. Otherwise -> Login screen.
-            val next = if (loggedIn) DashboardActivity::class.java else LogInActivity::class.java
+            // Gate scanner accounts -> QR scanner (Cat's ScannerOnlyRole).
+            // Logged in before -> straight to Home. Otherwise -> Login screen.
+            val next = when {
+                loggedIn && ScannerOnlyRole.isScanner() -> GateScannerActivity::class.java
+                loggedIn -> DashboardActivity::class.java
+                else -> LogInActivity::class.java
+            }
             // Fade into the next screen (no sliding), then remove the splash from the back stack
             startWithFade(Intent(this@SplashActivity, next), fadeMs = 300)
             finishWithoutAnimation()

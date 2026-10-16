@@ -1,5 +1,6 @@
 package com.example.railtap
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
@@ -11,6 +12,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.graphics.drawable.GradientDrawable
+import android.view.Gravity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -22,13 +30,15 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
- * Tickets tab: active passes loaded from Supabase (Cat's TicketRepository), refreshed
- * every 30 seconds while visible. Tapping a pass opens its QR (QRPassActivity).
- * Layout: fragment_tickets.xml
+ * Tickets tab: active passes + completed (scanned) journeys from Supabase
+ * (Cat's TicketRepository), refreshed every 30 seconds while visible.
+ * Tapping a pass opens its QR (QRPassActivity). Layout: fragment_tickets.xml
  */
 class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
     private val repo = TicketRepository()
     private var passes: List<TransitPass> = emptyList()
+    private var scannedPasses: List<TransitPass> = emptyList()
+    private lateinit var scannedSection: LinearLayout
     private lateinit var adapter: OtherPassesAdapter
     private val handler = Handler(Looper.getMainLooper())
     private var loadJob: Job? = null
@@ -56,6 +66,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         })
         adapter = OtherPassesAdapter { pass -> openQr(pass) }
         recycler.adapter = adapter
+        setupScannedSection()
         renderPasses()
     }
 
@@ -80,8 +91,9 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         if (loadJob?.isActive == true) return
         loadJob = viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val result = repo.loadActivePasses()
-                passes = result
+                val overview = repo.loadTicketOverview()
+                passes = overview.active
+                scannedPasses = overview.scanned
                 hasLoaded = true
                 loadError = null
                 renderPasses()
@@ -96,10 +108,11 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
     }
 
     private fun renderPasses() {
+        renderScannedTickets()
         // Every passenger must still be valid. A group can contain more than one.
         val now = System.currentTimeMillis()
         val validPasses = passes.mapNotNull { pass ->
-            val validTickets = pass.tickets.filter { it.expiresAtMillis > now }
+            val validTickets = pass.tickets.filter { it.status == "entered" || (it.status == "unused" && it.expiresAtMillis > now) }
             if (validTickets.isEmpty()) null else pass.copy(tickets = validTickets)
         }
 
@@ -131,7 +144,11 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
                 }
                 else -> {
                     emptyTitle.text = "No Active Tickets"
-                    emptySubtitle.text = "You don't have any active transit passes right now. Book a ticket to begin your ride."
+                    emptySubtitle.text = if (scannedPasses.isEmpty()) {
+                        "You don't have any active transit passes right now. Book a ticket to begin your ride."
+                    } else {
+                        "Your used passes are marked SCANNED below. Buy another ticket to ride again."
+                    }
                     action.text = "Buy Ticket  →"
                     action.isEnabled = true
                     action.setOnClickListener {
@@ -149,6 +166,81 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         adapter.update(validPasses.drop(1))
     }
 
+    /** A separate non-clickable history section; scanned tickets cannot show a usable QR. */
+    private fun setupScannedSection() {
+        val scroll = findViewById<ScrollView>(R.id.dashboardScroll)
+        val content = scroll.getChildAt(0) as LinearLayout
+        scannedSection = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = View.GONE
+            setPadding(0, dp(18), 0, dp(20))
+        }
+        content.addView(scannedSection)
+    }
+
+    private fun renderScannedTickets() {
+        if (!::scannedSection.isInitialized) return
+        scannedSection.removeAllViews()
+        if (scannedPasses.isEmpty()) {
+            scannedSection.visibility = View.GONE
+            return
+        }
+        scannedSection.visibility = View.VISIBLE
+        scannedSection.addView(TextView(requireContext()).apply {
+            text = "COMPLETED JOURNEYS"
+            textSize = 13f
+            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            setTextColor(Color.parseColor("#182138"))
+            setPadding(dp(4), 0, 0, dp(12))
+        })
+        val stampFormat = SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.getDefault())
+        for (pass in scannedPasses) {
+            for (ticket in pass.tickets) {
+                val card = LinearLayout(requireContext()).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(dp(18), dp(16), dp(18), dp(16))
+                    background = GradientDrawable().apply {
+                        setColor(Color.WHITE)
+                        cornerRadius = dp(15).toFloat()
+                        setStroke(dp(1), Color.parseColor("#CCE5D8"))
+                    }
+                    elevation = dp(1).toFloat()
+                }
+                card.addView(TextView(requireContext()).apply {
+                    text = "✓  JOURNEY COMPLETED"
+                    textSize = 13f
+                    setTypeface(typeface, android.graphics.Typeface.BOLD)
+                    setTextColor(Color.parseColor("#00875A"))
+                    gravity = Gravity.START
+                })
+                card.addView(TextView(requireContext()).apply {
+                    text = "${pass.lineName}  •  ${pass.origin} → ${pass.destination}"
+                    textSize = 14f
+                    setTypeface(typeface, android.graphics.Typeface.BOLD)
+                    setTextColor(Color.parseColor("#0B1A30"))
+                    setPadding(0, dp(8), 0, dp(4))
+                })
+                card.addView(TextView(requireContext()).apply {
+                    val time = ticket.scannedAtMillis?.takeIf { it > 0L }?.let {
+                        stampFormat.format(Date(it))
+                    } ?: "Time unavailable"
+                    val entered = ticket.enteredAtMillis?.takeIf { it > 0L }?.let {
+                        stampFormat.format(Date(it))
+                    } ?: "Not recorded (older ticket)"
+                    text = "Ticket #${ticket.ticketId}  •  ${ticket.fareType}\nEntered: $entered\nExited: $time"
+                    textSize = 12f
+                    setTextColor(Color.parseColor("#62718A"))
+                })
+                scannedSection.addView(card, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { bottomMargin = dp(12) })
+            }
+        }
+    }
+
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density + 0.5f).toInt()
+
     private fun bindFeatured(pass: TransitPass) {
         val lrt1 = pass.lineName == "LRT-1"
         val color = Color.parseColor(if (lrt1) "#00875A" else "#6B56C8")
@@ -157,13 +249,18 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
             setBackgroundResource(if (lrt1) R.drawable.bg_rt_lrt1_label else R.drawable.bg_purple_pill)
             setTextColor(Color.WHITE)
         }
-        findViewById<TextView>(R.id.passengersBadge).text =
+        val enteredCount = pass.tickets.count { it.status == "entered" }
+        findViewById<TextView>(R.id.passengersBadge).text = if (enteredCount > 0) {
+            "$enteredCount ENTERED / ${pass.passengersCount} PASSENGERS"
+        } else {
             "${pass.passengersCount} PASSENGER${if (pass.passengersCount == 1) "" else "S"}"
+        }
         findViewById<TextView>(R.id.originStation).text = pass.origin
         findViewById<TextView>(R.id.destinationStation).text = pass.destination
         findViewById<ImageView>(R.id.arrow1).setColorFilter(color)
         findViewById<MaterialButton>(R.id.btnShowAllQR).apply {
             backgroundTintList = ColorStateList.valueOf(color)
+            text = if (enteredCount > 0) "SHOW QR FOR EXIT" else "SHOW ALL QR CODE"
             setOnClickListener { openQr(pass) }
         }
         val warning = findViewById<View>(R.id.warningBanner)
@@ -172,7 +269,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
     }
 
     private fun openQr(pass: TransitPass) {
-        if (pass.tickets.none { it.expiresAtMillis > System.currentTimeMillis() }) {
+        if (pass.tickets.none { it.status == "entered" || (it.status == "unused" && it.expiresAtMillis > System.currentTimeMillis()) }) {
             Toast.makeText(requireContext(), "This pass has expired", Toast.LENGTH_SHORT).show()
             fetchPassesFromDatabase()
             return
@@ -215,6 +312,7 @@ class OtherPassesAdapter(
         holder.destination.text = pass.destination
         holder.arrow.setColorFilter(color)
         holder.expiry.text = pass.expiryDisplay
+        holder.showQR.text = if (pass.tickets.any { it.status == "entered" }) "SHOW QR FOR EXIT" else "SHOW QR CODE"
         holder.warning.visibility = if (pass.isExpiringSoon) View.VISIBLE else View.GONE
         holder.warning.text = pass.warningDisplay
         holder.showQR.backgroundTintList = ColorStateList.valueOf(color)

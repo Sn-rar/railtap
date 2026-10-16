@@ -23,7 +23,10 @@ private data class TicketDb(
     val status: String,
     @SerialName("expires_at") val expiresAt: String,
     @SerialName("created_at") val createdAt: String = "",
-    @SerialName("used_at") val usedAt: String? = null
+    @SerialName("used_at") val usedAt: String? = null,
+    @SerialName("entered_at") val enteredAt: String? = null,
+    @SerialName("entry_station_id") val entryStationId: Int? = null,
+    @SerialName("exit_station_id") val exitStationId: Int? = null
 )
 
 @Serializable
@@ -76,7 +79,10 @@ data class PassengerTicket(
     val fareType: String,
     val fare: Double,
     val qrToken: String,
-    val expiresAtMillis: Long
+    val expiresAtMillis: Long,
+    val scannedAtMillis: Long? = null,
+    val status: String = "unused",
+    val enteredAtMillis: Long? = null
 )
 
 data class TransitPass(
@@ -91,30 +97,43 @@ data class TransitPass(
     val passengersCount: Int get() = tickets.size
     val expiresAtTimestamp: Long get() = tickets.minOfOrNull { it.expiresAtMillis } ?: 0L
     val isExpiringSoon: Boolean
-        get() = (expiresAtTimestamp - System.currentTimeMillis()) in 1..3_600_000L
+        get() = tickets.any { ticket ->
+            val end = if (ticket.status == "entered") {
+                (ticket.enteredAtMillis ?: 0L) + 4L * 60L * 60L * 1000L
+            } else ticket.expiresAtMillis
+            val remaining = end - System.currentTimeMillis()
+            remaining in 1..3_600_000L
+        }
 
     val expiryDisplay: String
         get() {
+            if (tickets.any { it.status == "entered" }) return "ENTERED • Scan again at exit"
             val remaining = expiresAtTimestamp - System.currentTimeMillis()
             if (remaining <= 0L) return "Expired"
             val mins = (remaining + 59_999L) / 60_000L
-            val hr = mins / 60
-            val min = mins % 60
-            return when {
-                hr > 0 -> "Expires in ${hr} hr ${min} min"
-                else -> "Expires in ${mins} min"
-            }
+            return "Expires in ${mins / 60} hr ${mins % 60} min"
         }
 
     val warningDisplay: String
-        get() {
-            val remaining = expiresAtTimestamp - System.currentTimeMillis()
-            val mins = ((remaining + 59_999L) / 60_000L).coerceAtLeast(0)
-            val time = SimpleDateFormat("h:mm a", Locale.getDefault())
-                .format(Date(expiresAtTimestamp))
-            return "Your pass expires in $mins minutes at $time. Use it before it expires!"
+        get() = if (tickets.any { it.status == "entered" }) {
+            "Passenger entered. Use the SAME QR to exit the booked destination station (within 4 hours)."
+        } else {
+            "Your ticket is nearing its entry deadline. Enter before it expires!"
         }
+
 }
+
+/** A single refresh loads both live and already-consumed tickets for the owner. */
+data class TicketOverview(
+    val active: List<TransitPass>,
+    val scanned: List<TransitPass>
+)
+
+data class TicketUsageStatus(
+    val status: String,
+    val scannedAtMillis: Long?,
+    val enteredAtMillis: Long?
+)
 
 /** Handles ISO timestamps from Postgres on Android API 24+, without java.time desugaring. */
 private fun parseSupabaseTime(iso: String): Long {
@@ -144,26 +163,42 @@ private fun parseSupabaseTime(iso: String): Long {
 class TicketRepository {
     private val client = SupabaseClient.client // same authenticated client used by login and booking
 
-    suspend fun loadActivePasses(): List<TransitPass> {
+    /** Only return usable QR passes to QRPassActivity. */
+    suspend fun loadActivePasses(): List<TransitPass> = loadTicketOverview().active
+
+    /** Refresh an open passenger QR screen after the separate gate device scans it. */
+    suspend fun getTicketUsage(ticketId: Int): TicketUsageStatus? {
+        val rows = client.postgrest.from("tickets")
+            .select { filter { eq("ticket_id", ticketId) } }
+            .decodeList<TicketDb>()
+        val row = rows.firstOrNull() ?: return null
+        return TicketUsageStatus(row.status, row.usedAt?.let(::parseSupabaseTime), row.enteredAt?.let(::parseSupabaseTime))
+    }
+
+    /** Shows active and scanned tickets using existing ticket/transaction/payment RLS. */
+    suspend fun loadTicketOverview(): TicketOverview {
         val uid = client.auth.currentUserOrNull()?.id
             ?: throw IllegalStateException("Not signed in. Please sign in to view your tickets.")
 
-        // Only completed purchases are shown, never unpaid/pending bookings.
         val paidTransactions = client.postgrest.from("transactions")
             .select { filter { eq("user_id", uid); eq("status", "paid") } }
             .decodeList<TransactionDb>()
-        if (paidTransactions.isEmpty()) return emptyList()
+        if (paidTransactions.isEmpty()) return TicketOverview(emptyList(), emptyList())
         val transactionMap = paidTransactions.associateBy { it.transactionId }
 
-        // RLS ensures the signed-in user only receives their own tickets/payments.
-        val dbTickets = client.postgrest.from("tickets")
-            .select { filter { eq("status", "unused") } }
-            .decodeList<TicketDb>()
+        // Existing policies ensure a buyer can read only their own tickets.
+        // Do NOT filter 'unused' at query time, or scanned passes will disappear.
+        val dbTickets = client.postgrest.from("tickets").select().decodeList<TicketDb>()
         val now = System.currentTimeMillis()
-        val eligible = dbTickets.filter { row ->
-            row.transactionId in transactionMap && row.usedAt == null && parseSupabaseTime(row.expiresAt) > now
+        val relevant = dbTickets.filter { row ->
+            row.transactionId in transactionMap && (
+                (row.status == "unused" && row.usedAt == null &&
+                    parseSupabaseTime(row.expiresAt) > now) ||
+                (row.status == "entered" && row.enteredAt != null && row.usedAt == null) ||
+                (row.status == "used" && row.usedAt != null)
+            )
         }
-        if (eligible.isEmpty()) return emptyList()
+        if (relevant.isEmpty()) return TicketOverview(emptyList(), emptyList())
 
         val lines = client.postgrest.from("lines").select().decodeList<LineDb>().associateBy { it.lineId }
         val stations = client.postgrest.from("stations").select().decodeList<StationDb>().associateBy { it.stationId }
@@ -173,38 +208,55 @@ class TicketRepository {
             .decodeList<PaymentDb>()
             .associateBy { it.transactionId }
 
-        return eligible.groupBy { it.transactionId }.mapNotNull { (transactionId, rows) ->
-            val transaction = transactionMap[transactionId] ?: return@mapNotNull null
-            if (paymentRefs[transactionId] == null) return@mapNotNull null
-            val first = rows.first()
-            val lineCode = lines[first.lineId]?.code ?: "LRT1"
-            val lineLabel = when (lineCode.replace("-", "").uppercase(Locale.ROOT)) {
-                "LRT2" -> "LRT-2"
-                else -> "LRT-1"
-            }
-            val passengerTickets = rows.sortedBy { it.ticketId }.map { ticket ->
-                PassengerTicket(
-                    ticketId = ticket.ticketId,
-                    fareType = when (discounts[ticket.discountId]?.type) {
-                        "student" -> "Student"
-                        "senior" -> "Senior Citizen"
-                        "pwd" -> "PWD"
-                        else -> "Regular"
+        val activePasses = mutableListOf<TransitPass>()
+        val scannedPasses = mutableListOf<TransitPass>()
+        for ((transactionId, rows) in relevant.groupBy { it.transactionId }) {
+            val transaction = transactionMap[transactionId] ?: continue
+            val payment = paymentRefs[transactionId] ?: continue
+
+            fun makePass(passengerRows: List<TicketDb>): TransitPass {
+                val first = passengerRows.first()
+                val code = lines[first.lineId]?.code ?: "LRT1"
+                val lineLabel = if (code.replace("-", "").uppercase(Locale.ROOT) == "LRT2") {
+                    "LRT-2"
+                } else { "LRT-1" }
+                return TransitPass(
+                    transactionId = transactionId,
+                    referenceNo = payment.referenceNo,
+                    lineName = lineLabel,
+                    origin = stations[first.originId]?.name ?: "Unknown",
+                    destination = stations[first.destinationId]?.name ?: "Unknown",
+                    tickets = passengerRows.sortedBy { it.ticketId }.map { row ->
+                        PassengerTicket(
+                            ticketId = row.ticketId,
+                            fareType = when (discounts[row.discountId]?.type) {
+                                "student" -> "Student"
+                                "senior" -> "Senior Citizen"
+                                "pwd" -> "PWD"
+                                else -> "Regular"
+                            },
+                            fare = row.fare,
+                            qrToken = row.qrToken,
+                            expiresAtMillis = parseSupabaseTime(row.expiresAt),
+                            scannedAtMillis = row.usedAt?.let(::parseSupabaseTime),
+                            status = row.status,
+                            enteredAtMillis = row.enteredAt?.let(::parseSupabaseTime)
+                        )
                     },
-                    fare = ticket.fare,
-                    qrToken = ticket.qrToken,
-                    expiresAtMillis = parseSupabaseTime(ticket.expiresAt)
+                    purchasedAtMillis = parseSupabaseTime(transaction.createdAt)
                 )
             }
-            TransitPass(
-                transactionId = transactionId,
-                referenceNo = paymentRefs[transactionId]?.referenceNo ?: "TXN-$transactionId",
-                lineName = lineLabel,
-                origin = stations[first.originId]?.name ?: "Unknown",
-                destination = stations[first.destinationId]?.name ?: "Unknown",
-                tickets = passengerTickets,
-                purchasedAtMillis = parseSupabaseTime(transaction.createdAt)
-            )
-        }.sortedByDescending { it.purchasedAtMillis }
+
+            val activeRows = rows.filter { it.status == "unused" || it.status == "entered" }
+            val scannedRows = rows.filter { it.status == "used" }
+            if (activeRows.isNotEmpty()) activePasses.add(makePass(activeRows))
+            if (scannedRows.isNotEmpty()) scannedPasses.add(makePass(scannedRows))
+        }
+        return TicketOverview(
+            active = activePasses.sortedByDescending { it.purchasedAtMillis },
+            scanned = scannedPasses.sortedByDescending { pass ->
+                pass.tickets.maxOfOrNull { it.scannedAtMillis ?: 0L } ?: 0L
+            }
+        )
     }
 }
