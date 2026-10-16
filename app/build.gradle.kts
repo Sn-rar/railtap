@@ -50,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation("com.google.zxing:core:3.5.3")
     // Android libraries
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)

@@ -68,5 +68,6 @@
             android:name=".TermsActivity"
             android:exported="false" />
 
+            <activity android:name=".QRPassActivity" android:exported="false" />
     </application>
 </manifest>

@@ -1,259 +1,228 @@
 package com.example.railtap
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-
-data class TransitPass(
-    val id: String = "",
-    val lineName: String = "",           // "LRT-1" or "LRT-2"
-    val passengersCount: Int = 1,
-    val origin: String = "",             // "MARIKINA\nPASIG"
-    val destination: String = "",        // "RECTO"
-    val expiresAtTimestamp: Long = 0L,   // Epoch millis from DB
-    val customWarningText: String? = null
-) {
-    // Calculates "Expires in X hours / minutes" dynamically
-    val expiryDisplay: String
-        get() {
-            val remainingMillis = expiresAtTimestamp - System.currentTimeMillis()
-            if (remainingMillis <= 0) return "Expired"
-
-            val hours = TimeUnit.MILLISECONDS.toHours(remainingMillis)
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis) % 60
-
-            return when {
-                hours > 0 -> "Expires in $hours hour" + if (hours > 1) "s" else ""
-                else -> "Expires in $minutes minute" + if (minutes > 1) "s" else ""
-            }
-        }
-
-    // Displays warning banner if pass expires in under 60 minutes
-    val isExpiringSoon: Boolean
-        get() {
-            val remainingMillis = expiresAtTimestamp - System.currentTimeMillis()
-            return remainingMillis in 1..TimeUnit.MINUTES.toMillis(60)
-        }
-
-    val warningDisplay: String
-        get() {
-            if (!customWarningText.isNullOrEmpty()) return customWarningText
-            val remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(expiresAtTimestamp - System.currentTimeMillis())
-            val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
-            return "Your pass expires in $remainingMinutes minutes at ${timeFormat.format(Date(expiresAtTimestamp))}. Use it before it expires!"
-        }
-}
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class TicketsActivity : AppCompatActivity() {
-
-    private var allPasses = mutableListOf<TransitPass>()
+    private val repo = TicketRepository()
+    private var passes: List<TransitPass> = emptyList()
     private lateinit var adapter: OtherPassesAdapter
+    private val handler = Handler(Looper.getMainLooper())
+    private var loadJob: Job? = null
+    private var hasLoaded = false
+    private var loadError: String? = null
+
+    private val refresher = object : Runnable {
+        override fun run() {
+            renderPasses()                 // countdown and expiry change immediately
+            fetchPassesFromDatabase()      // also check server for used/paid tickets
+            handler.postDelayed(this, 30_000L)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tickets)
-        applySystemBarPadding() // keep content out from under the status/navigation bars
-
+        applySystemBarPadding()
         setupBottomNav(this, NavTab.TICKETS)
 
-        val rvOther = findViewById<RecyclerView>(R.id.rvOtherPasses)
-        rvOther.layoutManager = LinearLayoutManager(this)
-
-        // Adds 16dp spacing between cards without using layout_marginBottom on the item root
-        rvOther.addItemDecoration(object : RecyclerView.ItemDecoration() {
+        val recycler = findViewById<RecyclerView>(R.id.rvOtherPasses)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
+                outRect: Rect, view: View, parent: RecyclerView,
                 state: RecyclerView.State
-            ) {
-                val density = view.resources.displayMetrics.density
-                outRect.bottom = (16 * density).toInt()
-            }
+            ) { outRect.bottom = (16 * resources.displayMetrics.density).toInt() }
         })
+        adapter = OtherPassesAdapter { pass -> openQr(pass) }
+        recycler.adapter = adapter
+        renderPasses()
+    }
 
-        adapter = OtherPassesAdapter(mutableListOf()) { clickedPass, adapterPosition ->
-            // Swap clicked item with top card (index 0)
-            val currentTop = allPasses[0]
-            val clickedFullIndex = adapterPosition + 1
+    override fun onResume() {
+        super.onResume()
+        handler.removeCallbacks(refresher)
+        refresher.run()
+    }
 
-            allPasses[0] = clickedPass
-            allPasses[clickedFullIndex] = currentTop
-
-            refreshUI()
-        }
-        rvOther.adapter = adapter
-
-        // Setup empty state button
-        findViewById<View>(R.id.btnBuyTicketEmpty)?.setOnClickListener {
-            // Booking needs a line (LRT-1 / LRT-2), so go to Home to pick one
-            startActivity(android.content.Intent(this, DashboardActivity::class.java)
-                .addFlags(android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-        }
-
-        fetchPassesFromDatabase()
+    override fun onPause() {
+        handler.removeCallbacks(refresher)
+        // Don't cancel loadJob here: cancellation is normal when the screen changes,
+        // and an interrupted request must not be shown as a database error.
+        super.onPause()
     }
 
     private fun fetchPassesFromDatabase() {
-        // Database not connected yet, so there are no passes (shows the empty "No Active Tickets" card).
-        // To preview the screen with fake passes, change this to true.
-        val useSampleData = false
-        if (!useSampleData) {
-            allPasses = mutableListOf()
-            refreshUI()
-            return
+        // One request at a time; don't continually cancel an in-flight request.
+        if (loadJob?.isActive == true) return
+        loadJob = lifecycleScope.launch {
+            try {
+                val result = repo.loadActivePasses()
+                passes = result
+                hasLoaded = true
+                loadError = null
+                renderPasses()
+            } catch (cancelled: CancellationException) {
+                throw cancelled // normal lifecycle cancellation is NOT a load error
+            } catch (e: Exception) {
+                Log.e("RailTapTickets", "Couldn't load active tickets", e)
+                loadError = e.message ?: e.javaClass.simpleName
+                renderPasses() // preserve previously loaded tickets on transient errors
+            }
         }
+    }
 
+    private fun renderPasses() {
+        // Every passenger must still be valid. A group can contain more than one.
         val now = System.currentTimeMillis()
+        val validPasses = passes.mapNotNull { pass ->
+            val validTickets = pass.tickets.filter { it.expiresAtMillis > now }
+            if (validTickets.isEmpty()) null else pass.copy(tickets = validTickets)
+        }
 
-        // Sample passes for testing only. Replace with your database query later.
-        allPasses = mutableListOf(
-            TransitPass(
-                id = "1",
-                lineName = "LRT-2",
-                passengersCount = 3,
-                origin = "MARIKINA\nPASIG",
-                destination = "RECTO",
-                expiresAtTimestamp = now + TimeUnit.MINUTES.toMillis(59),
-                customWarningText = "Your pass expires in 59 minutes at 2:36 AM. Use it before it expires!"
-            ),
-            TransitPass(
-                id = "2",
-                lineName = "LRT-1",
-                passengersCount = 1,
-                origin = "FERNANDO\nPOE JR.",
-                destination = "BACLARAN",
-                expiresAtTimestamp = now + TimeUnit.HOURS.toMillis(3),
-                customWarningText = null
-            )
-        )
+        val empty = findViewById<View>(R.id.emptyCardContainer)
+        val featured = findViewById<View>(R.id.topCardContainer)
+        val others = findViewById<View>(R.id.layoutOtherPasses)
+        val emptyTitle = findViewById<TextView>(R.id.emptyTitle)
+        val emptySubtitle = findViewById<TextView>(R.id.emptySubtitle)
+        val action = findViewById<MaterialButton>(R.id.btnBuyTicketEmpty)
 
-        refreshUI()
-    }
-
-    private fun refreshUI() {
-        val emptyCard = findViewById<View>(R.id.emptyCardContainer)
-        val topContainer = findViewById<View>(R.id.topCardContainer)
-        val layoutOther = findViewById<View>(R.id.layoutOtherPasses)
-
-        // Case 1: No tickets in database
-        if (allPasses.isEmpty()) {
-            emptyCard.visibility = View.VISIBLE
-            topContainer.visibility = View.GONE
-            layoutOther.visibility = View.GONE
+        if (validPasses.isEmpty()) {
+            empty.visibility = View.VISIBLE
+            featured.visibility = View.GONE
+            others.visibility = View.GONE
+            adapter.update(emptyList())
+            when {
+                loadError != null -> {
+                    emptyTitle.text = "Couldn't Load Tickets"
+                    emptySubtitle.text = "Check your internet connection and sign-in, then try again."
+                    action.text = "Try Again"
+                    action.isEnabled = true
+                    action.setOnClickListener { fetchPassesFromDatabase() }
+                }
+                !hasLoaded -> {
+                    emptyTitle.text = "Loading Tickets…"
+                    emptySubtitle.text = "Fetching your purchased passes securely."
+                    action.text = "Loading…"
+                    action.isEnabled = false
+                }
+                else -> {
+                    emptyTitle.text = "No Active Tickets"
+                    emptySubtitle.text = "You don't have any active transit passes right now. Book a ticket to begin your ride."
+                    action.text = "Buy Ticket  →"
+                    action.isEnabled = true
+                    action.setOnClickListener {
+                        startActivity(Intent(this, DashboardActivity::class.java))
+                    }
+                }
+            }
             return
         }
 
-        // Case 2: At least 1 ticket exists
-        emptyCard.visibility = View.GONE
-        topContainer.visibility = View.VISIBLE
-        bindTopCard(allPasses[0])
-
-        // Case 3: More than 1 ticket exists
-        if (allPasses.size > 1) {
-            val otherList = allPasses.subList(1, allPasses.size).toMutableList()
-            layoutOther.visibility = View.VISIBLE
-            adapter.updateList(otherList)
-        } else {
-            layoutOther.visibility = View.GONE
-        }
+        empty.visibility = View.GONE
+        featured.visibility = View.VISIBLE
+        bindFeatured(validPasses.first())
+        others.visibility = if (validPasses.size > 1) View.VISIBLE else View.GONE
+        adapter.update(validPasses.drop(1))
     }
 
-    private fun bindTopCard(pass: TransitPass) {
-        val pill = findViewById<TextView>(R.id.lrt2Pill)
-        val passengers = findViewById<TextView>(R.id.passengersBadge)
-        val origin = findViewById<TextView>(R.id.originStation)
-        val destination = findViewById<TextView>(R.id.destinationStation)
-        val arrow = findViewById<ImageView>(R.id.arrow1)
-        val warningBanner = findViewById<View>(R.id.warningBanner)
-        val warningText = findViewById<TextView>(R.id.warningText)
-        val btnQR = findViewById<MaterialButton>(R.id.btnShowAllQR)
-
-        pill.text = pass.lineName
-        passengers.text = "${pass.passengersCount} PASSENGER" + if (pass.passengersCount > 1) "S" else ""
-        origin.text = pass.origin
-        destination.text = pass.destination
-
-        val isLine1 = pass.lineName.contains("1")
-        val themeColor = if (isLine1) Color.parseColor("#00875A") else Color.parseColor("#6B46C1")
-        val bgPillRes = if (isLine1) R.drawable.bg_pill_green else R.drawable.bg_purple_pill
-
-        pill.setBackgroundResource(bgPillRes)
-        arrow.setColorFilter(themeColor)
-        btnQR.backgroundTintList = ColorStateList.valueOf(themeColor)
-
-        if (pass.isExpiringSoon || !pass.customWarningText.isNullOrEmpty()) {
-            warningBanner.visibility = View.VISIBLE
-            warningText.text = pass.warningDisplay
-        } else {
-            warningBanner.visibility = View.GONE
+    private fun bindFeatured(pass: TransitPass) {
+        val lrt1 = pass.lineName == "LRT-1"
+        val color = Color.parseColor(if (lrt1) "#00875A" else "#6B56C8")
+        findViewById<TextView>(R.id.lrt2Pill).apply {
+            text = pass.lineName
+            setBackgroundResource(if (lrt1) R.drawable.bg_rt_lrt1_label else R.drawable.bg_purple_pill)
+            setTextColor(Color.WHITE)
         }
+        findViewById<TextView>(R.id.passengersBadge).text =
+            "${pass.passengersCount} PASSENGER${if (pass.passengersCount == 1) "" else "S"}"
+        findViewById<TextView>(R.id.originStation).text = pass.origin
+        findViewById<TextView>(R.id.destinationStation).text = pass.destination
+        findViewById<ImageView>(R.id.arrow1).setColorFilter(color)
+        findViewById<MaterialButton>(R.id.btnShowAllQR).apply {
+            backgroundTintList = ColorStateList.valueOf(color)
+            setOnClickListener { openQr(pass) }
+        }
+        val warning = findViewById<View>(R.id.warningBanner)
+        warning.visibility = if (pass.isExpiringSoon) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.warningText).text = pass.warningDisplay
+    }
+
+    private fun openQr(pass: TransitPass) {
+        if (pass.tickets.none { it.expiresAtMillis > System.currentTimeMillis() }) {
+            Toast.makeText(this, "This pass has expired", Toast.LENGTH_SHORT).show()
+            fetchPassesFromDatabase()
+            return
+        }
+        startActivity(QRPassActivity.openIntent(this, pass.transactionId))
     }
 }
 
 class OtherPassesAdapter(
-    private var passes: MutableList<TransitPass>,
-    private val onItemClick: (TransitPass, Int) -> Unit
-) : RecyclerView.Adapter<OtherPassesAdapter.PassViewHolder>() {
+    private val onClick: (TransitPass) -> Unit
+) : RecyclerView.Adapter<OtherPassesAdapter.Holder>() {
+    private var items = listOf<TransitPass>()
 
-    inner class PassViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val pill: TextView = view.findViewById(R.id.itemLinePill)
+    class Holder(view: View) : RecyclerView.ViewHolder(view) {
+        val badge: TextView = view.findViewById(R.id.itemLinePill)
         val passengers: TextView = view.findViewById(R.id.itemPassengerBadge)
         val origin: TextView = view.findViewById(R.id.itemOriginStation)
         val destination: TextView = view.findViewById(R.id.itemDestinationStation)
         val arrow: ImageView = view.findViewById(R.id.itemArrow)
         val expiry: TextView = view.findViewById(R.id.itemExpiryLabel)
-        val btnQR: MaterialButton = view.findViewById(R.id.itemBtnShowQR)
+        val warning: TextView = view.findViewById(R.id.itemWarningBanner)
+        val showQR: MaterialButton = view.findViewById(R.id.itemBtnShowQR)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PassViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_other_pass, parent, false)
-        return PassViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_other_pass, parent, false)
+        return Holder(view)
     }
 
-    override fun onBindViewHolder(holder: PassViewHolder, position: Int) {
-        val pass = passes[position]
-
-        holder.pill.text = pass.lineName
-        holder.passengers.text = "${pass.passengersCount} PASSENGER" + if (pass.passengersCount > 1) "S" else ""
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        val pass = items[position]
+        val lrt1 = pass.lineName == "LRT-1"
+        val color = Color.parseColor(if (lrt1) "#00875A" else "#6B56C8")
+        holder.badge.text = pass.lineName
+        holder.badge.setBackgroundResource(if (lrt1) R.drawable.bg_rt_lrt1_label else R.drawable.bg_purple_pill)
+        holder.badge.setTextColor(Color.WHITE)
+        holder.passengers.text = "${pass.passengersCount} PASSENGER${if (pass.passengersCount == 1) "" else "S"}"
         holder.origin.text = pass.origin
         holder.destination.text = pass.destination
+        holder.arrow.setColorFilter(color)
         holder.expiry.text = pass.expiryDisplay
-
-        val isLine1 = pass.lineName.contains("1")
-        val themeColor = if (isLine1) Color.parseColor("#00875A") else Color.parseColor("#6B46C1")
-        val bgPillRes = if (isLine1) R.drawable.bg_pill_green else R.drawable.bg_purple_pill
-
-        holder.pill.setBackgroundResource(bgPillRes)
-        holder.arrow.setColorFilter(themeColor)
-        holder.btnQR.backgroundTintList = ColorStateList.valueOf(themeColor)
-
-        holder.itemView.setOnClickListener {
-            onItemClick(pass, position)
-        }
-        holder.btnQR.setOnClickListener {
-            onItemClick(pass, position)
-        }
+        holder.warning.visibility = if (pass.isExpiringSoon) View.VISIBLE else View.GONE
+        holder.warning.text = pass.warningDisplay
+        holder.showQR.backgroundTintList = ColorStateList.valueOf(color)
+        holder.itemView.setOnClickListener { onClick(pass) }
+        holder.showQR.setOnClickListener { onClick(pass) }
     }
 
-    override fun getItemCount() = passes.size
+    override fun getItemCount() = items.size
 
-    fun updateList(newList: MutableList<TransitPass>) {
-        passes = newList
+    fun update(newItems: List<TransitPass>) {
+        items = newItems
         notifyDataSetChanged()
     }
 }
