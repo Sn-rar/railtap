@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Bullets with a bold lead-in (Privacy Policy, section 1) -->
-    <string name="privacy_info_transaction"><b>Transaction Information:</b> Details of fare transactions, including origin and destination stations, fare amounts, transaction dates, payment status, and transaction references.</string>
-    <string name="privacy_info_payment"><b>Payment Information:</b> Payment status and transaction references associated with supported payment providers. Sensitive payment credentials are handled according to the provider\'s policies and are not intentionally stored by RailTap unless explicitly required and securely implemented.</string>
-    <string name="privacy_info_qrnfc"><b>QR Code and NFC Information:</b> Data associated with generating, processing, or validating QR codes and NFC-based transactions.</string>
-    <string name="privacy_info_device"><b>Device and Technical Information:</b> Basic device, application, and diagnostic information needed to operate, troubleshoot, and improve the application.</string>
-    <string name="privacy_info_contact"><b>Contact Information:</b> Information you voluntarily provide when contacting us for support or inquiries.</string>
+    <string name="privacy_info_transaction"><b>Booking Information:</b> The line, origin and destination stations, number of passengers for each fare type, fare amount, booking date, payment status, and reference number of each booking.</string>
+    <string name="privacy_info_payment"><b>Payment Information:</b> The PayPal order ID, amount paid, payment status, and payment date. You log in and pay on PayPal\'s own page, so RailTap never sees or stores your PayPal password or card details.</string>
+    <string name="privacy_info_qrpass"><b>QR Pass Information:</b> The QR code of each passenger\'s pass, its expiry time, and the times and stations where it was scanned at the entry and exit gates.</string>
+    <string name="privacy_info_device"><b>Account Information:</b> Your full name, email address, and optional profile photo. Your password is handled by Supabase Authentication and is not stored by RailTap in readable form.</string>
+    <string name="privacy_info_contact"><b>Contact Information:</b> Anything you include in emails you send to RailTap support.</string>
 </resources>

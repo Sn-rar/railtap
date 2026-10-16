@@ -72,7 +72,7 @@
             <TextView
                 style="@style/LegalBody"
                 android:layout_marginTop="16dp"
-                android:text="Welcome to RailTap. These Terms and Conditions govern your access to and use of the RailTap application, which is designed to support NFC and QR code-based commuting transactions for LRT-1 and LRT-2." />
+                android:text="Welcome to RailTap. These Terms and Conditions govern your access to and use of the RailTap application, which lets you book LRT-1 and LRT-2 trips, pay through PayPal, and use QR passes at the station gate." />
 
             <TextView
                 style="@style/LegalBody"
@@ -89,11 +89,8 @@
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="RailTap is a digital commuting application designed to support transit-related functions, including fare information, QR code generation, NFC-based interactions, and payment transactions through supported methods." />
+                    android:text="RailTap is a mobile ticketing application. It lets you book trips between LRT-1 and LRT-2 stations, apply Student, Senior, and PWD fare discounts, pay through PayPal, receive a QR pass for each passenger, view receipts and trip history, and see line maps with travel times." />
 
-                <TextView
-                    style="@style/LegalBody"
-                    android:text="The availability of specific features depends on the application's implementation and the services integrated with it." />
 
                 <TextView
                     style="@style/LegalBody"
@@ -131,14 +128,14 @@
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletText"
-                        android:text="Keep your device and any account credentials secure, if applicable." />
+                        android:text="Keep your account password and your phone secure." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletText"
-                        android:text="Avoid manipulating, duplicating, or misusing QR codes, NFC functions, or transaction records." />
+                        android:text="Avoid sharing, duplicating, editing, or misusing QR passes or transaction records." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
@@ -167,19 +164,19 @@
 
                 <TextView
                     style="@style/LegalSectionTitleBrand"
-                    android:text="3. NFC and QR Code Transactions" />
+                    android:text="3. QR Passes and Gate Scanning" />
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="RailTap may provide NFC and QR code functionality to facilitate supported commuting transactions." />
+                    android:text="After your payment is confirmed, RailTap creates a QR pass for each passenger in your booking. Each pass must be used to enter before its expiry time, which is shown on the pass." />
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="Users must follow the instructions displayed in the application and use compatible devices, scanners, or authorized equipment." />
+                    android:text="Show the QR pass at the gate when you enter, and show the same QR pass again when you exit at your booked destination station. Exit must be within 4 hours of entry; after that, staff assistance is required." />
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="QR codes and NFC functions may be subject to technical limitations, device compatibility, connectivity requirements, and validation procedures. A generated QR code or successful NFC interaction does not, by itself, guarantee that a fare transaction has been accepted by a transit operator." />
+                    android:text="Passes are checked by RailTap gate scanner accounts and need an internet connection to be validated. A pass that has already been used for exit, or has expired before entry, can no longer be used. Once you exit, the trip moves to Completed Journeys." />
 
                 <TextView
                     style="@style/LegalBody"
@@ -201,7 +198,7 @@
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="Where supported, payments may be processed through integrated third-party payment services. Payment confirmation, processing times, reversals, refunds, and disputes may be subject to the applicable payment provider's terms." />
+                    android:text="Payments are processed through PayPal. RailTap does not process refunds inside the app; payment confirmation, reversals, refunds, and disputes are subject to PayPal's terms." />
 
                 <TextView
                     style="@style/LegalBody"
@@ -223,7 +220,7 @@
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="RailTap may display transaction information, including station selections, fare amounts, payment statuses, and transaction references." />
+                    android:text="RailTap shows your booking details, including stations, passengers, fare amounts, payment status, and reference numbers, in your receipts and trip history." />
 
                 <TextView
                     style="@style/LegalBody"
@@ -278,9 +275,6 @@
                         android:text="Use the application in violation of applicable laws or transit regulations." />
                 </LinearLayout>
 
-                <TextView
-                    style="@style/LegalBody"
-                    android:text="RailTap may restrict access to affected features when necessary to investigate suspected misuse or protect the application, subject to applicable law." />
             </LinearLayout>
 
             <View style="@style/LegalDivider" />
@@ -312,7 +306,7 @@
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="RailTap may integrate with external database providers, payment services, or other third-party platforms. These services may have separate terms and privacy policies." />
+                    android:text="RailTap uses Supabase for accounts and data storage and PayPal for payments. These services have their own terms and privacy policies." />
 
                 <TextView
                     style="@style/LegalBody"
@@ -412,7 +406,7 @@
 
                 <TextView
                     style="@style/LegalBody"
-                    android:text="If you have questions about these Terms and Conditions, please contact the RailTap team through the Contact Us section of this website." />
+                    android:text="If you have questions about these Terms and Conditions, please email railtap.support@gmail.com or use Contact Us in the Account tab." />
             </LinearLayout>
 
         </LinearLayout>

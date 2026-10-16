@@ -62,7 +62,7 @@
                 style="@style/LegalBody"
                 android:layout_marginTop="16dp"
                 android:textColor="@color/neutral_heading"
-                android:text="RailTap respects your privacy and is committed to protecting the personal information of its users. This Privacy Policy explains how RailTap collects, uses, stores, and protects information when you use our application for LRT-1 and LRT-2 commuting." />
+                android:text="RailTap respects your privacy and is committed to protecting the personal information of its users. This Privacy Policy explains how RailTap collects, uses, stores, and protects information when you use the app to book LRT-1 and LRT-2 tickets." />
 
             <!-- 1 -->
             <LinearLayout style="@style/LegalSection">
@@ -73,7 +73,7 @@
 
                 <TextView
                     style="@style/LegalBodySmall"
-                    android:text="Depending on the features you use, RailTap may collect the following information:" />
+                    android:text="RailTap collects the following information:" />
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
@@ -93,7 +93,7 @@
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="@string/privacy_info_qrnfc" />
+                        android:text="@string/privacy_info_qrpass" />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
@@ -112,7 +112,7 @@
 
                 <TextView
                     style="@style/LegalBodySmall"
-                    android:text="The information collected depends on the features available and your use of the application." />
+                    android:text="RailTap does not collect your location, contacts, or other files from your phone. The camera is only used on gate scanner accounts to read QR passes." />
             </LinearLayout>
 
             <!-- 2 -->
@@ -130,49 +130,49 @@
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Process and record transit-related transactions." />
+                        android:text="Create your bookings and record their payments." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Facilitate supported NFC and QR code-based functions." />
+                        android:text="Generate your QR passes and check them at the entry and exit gates." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Display transaction histories and payment statuses." />
+                        android:text="Show your active passes, completed journeys, receipts, and trip history." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Calculate or display applicable fares between stations." />
+                        android:text="Calculate the fare and discounts for the stations and passengers you choose." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Respond to questions, complaints, and support requests." />
+                        android:text="Reply to emails sent to RailTap support." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Maintain application security and investigate suspicious activity." />
+                        android:text="Let you log in, stay logged in, and reset your password." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
                     <TextView style="@style/LegalBulletDot" />
                     <TextView
                         style="@style/LegalBulletTextSmall"
-                        android:text="Troubleshoot technical problems and improve application performance." />
+                        android:text="Show your name and profile photo in the app." />
                 </LinearLayout>
 
                 <LinearLayout style="@style/LegalBulletRow">
@@ -196,7 +196,7 @@
 
                 <TextView
                     style="@style/LegalBodyDark"
-                    android:text="Information may be stored using database and cloud services used by the application. Access should be limited to authorized individuals and systems that require the information to perform their responsibilities." />
+                    android:text="Your account, bookings, passes, payments, and profile photo are stored in Supabase, the database, login, and file storage service used by the app." />
 
                 <TextView
                     style="@style/LegalBodyDark"
@@ -216,7 +216,7 @@
 
                 <TextView
                     style="@style/LegalBodyDark"
-                    android:text="Information may be shared only when reasonably necessary to operate the application, such as with authorized service providers, supported payment processors, or parties required by applicable law. Information may also be disclosed when necessary to protect the security and integrity of the application or its users." />
+                    android:text="Information is shared only with the services the app needs to work: Supabase, which stores your account and booking data, and PayPal, which processes your payment. Information may also be disclosed when required by applicable law." />
 
                 <TextView
                     style="@style/LegalBodyDark"
@@ -294,7 +294,7 @@
 
                 <TextView
                     style="@style/LegalBodySmall"
-                    android:text="To exercise these rights, contact RailTap using the contact information provided on this website." />
+                    android:text="To exercise these rights, email railtap.support@gmail.com or use Contact Us in the Account tab." />
             </LinearLayout>
 
             <!-- 7 -->
@@ -306,7 +306,7 @@
 
                 <TextView
                     style="@style/LegalBodyDark"
-                    android:text="RailTap may rely on third-party platforms for database hosting, payment processing, or other application functions. RailTap does not control the independent privacy practices of these providers. Users should review the relevant policies of third-party services when applicable." />
+                    android:text="RailTap uses Supabase for accounts, data, and file storage, and PayPal for payments. RailTap does not control the privacy practices of these providers, so please review their own privacy policies as well." />
             </LinearLayout>
 
             <!-- 8 -->
@@ -342,7 +342,7 @@
 
                 <TextView
                     style="@style/LegalBodyDark"
-                    android:text="For privacy-related questions, requests, or concerns, please contact the RailTap team through the Contact Us section of this website." />
+                    android:text="For privacy-related questions, requests, or concerns, please email railtap.support@gmail.com or use Contact Us in the Account tab." />
             </LinearLayout>
 
             <View style="@style/LegalDivider" />

@@ -193,6 +193,7 @@
 
                     <TextView
                         android:id="@+id/tvReceiptOrigin"
+                        android:textAllCaps="true"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:layout_width="0dp"
@@ -233,6 +234,7 @@
 
                     <TextView
                         android:id="@+id/tvReceiptDestination"
+                        android:textAllCaps="true"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:layout_width="0dp"

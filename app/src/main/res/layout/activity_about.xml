@@ -40,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/plus_jakarta_sans_extrabold"
-                android:text="RailTap — Tap, Scan, and Go!"
+                android:text="RailTap — Book, Pay, and Scan to Ride"
                 android:textColor="@color/neutral_heading"
                 android:textSize="28sp"
                 android:textStyle="bold" />
@@ -48,17 +48,17 @@
             <TextView
                 style="@style/LegalBody"
                 android:layout_marginTop="16dp"
-                android:text="RailTap is a smart commuting solution designed to make traveling through Light Rail Transit (LRT) Lines 1 and 2 more convenient, accessible, and efficient. By integrating Near Field Communication (NFC) technology and QR code-based transactions, RailTap aims to simplify the commuting experience and provide passengers with a modern alternative to traditional fare payment methods." />
+                android:text="RailTap is a mobile ticketing app for Light Rail Transit (LRT) Lines 1 and 2. Instead of lining up at the ticket booth, you can book your trip on your phone, pay for it with PayPal, and get a QR pass for each passenger that is scanned at the station gate." />
 
             <TextView
                 style="@style/LegalBody"
                 android:layout_marginTop="16dp"
-                android:text="With RailTap, commuters can access a digital platform for managing their transit transactions, checking fare information, and making payments through supported payment methods. Designed with convenience and ease of use in mind, RailTap aims to reduce the hassle of everyday commuting while promoting a more seamless and digitally connected transportation experience." />
+                android:text="When booking, you choose your origin and destination stations, add passengers with Student, Senior, or PWD discounts, and see the total fare before paying. The same QR pass is scanned when you enter and again when you exit. Your active passes, completed journeys, receipts, and trip history are kept in your account, and the Lines tab shows the LRT-1 and LRT-2 maps with travel times between stations." />
 
             <TextView
                 style="@style/LegalBody"
                 android:layout_marginTop="16dp"
-                android:text="Whether you're traveling for school, work, or leisure, RailTap is built to help make your daily journey simpler, faster, and more convenient." />
+                android:text="Whether you're traveling for school, work, or leisure, RailTap lets you have your ticket ready before you reach the station." />
 
             <View
                 style="@style/LegalDivider"
@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/plus_jakarta_sans_extrabold"
-                android:text="RailTap — Your Journey, One Tap Away."
+                android:text="RailTap — Book it. Scan it. Ride."
                 android:textColor="@color/brand"
                 android:textSize="20sp"
                 android:textStyle="bold" />
