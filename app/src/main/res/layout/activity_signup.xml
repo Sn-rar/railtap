@@ -159,6 +159,12 @@
                 android:textColor="@color/neutral_heading"
                 android:textSize="14sp" />
 
+            <!-- Error message (hidden until there's a problem) -->
+            <TextView
+                android:id="@+id/passwordError"
+                style="@style/FieldErrorText"
+                android:text="Password must be at least 6 characters" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,6 +237,16 @@
                     android:textColorHint="@color/neutral_subtle"
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- "Passwords do not match" error, centered under the box (hidden until needed) -->
+            <TextView
+                android:id="@+id/confirmPasswordError"
+                style="@style/FieldErrorText"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Passwords do not match" />
 
             <!-- Sign Up Button -->
             <Button

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Shared bottom navigation bar, used by every screen with:
+        <include layout="@layout/layout_bottom_nav" ... />
+    The active tab is highlighted in code by setupBottomNav() in BottomNav.kt.
+    Sizes come from dimens.xml, so it adapts to small phones, normal phones and tablets.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:elevation="12dp"
+    android:minHeight="@dimen/bottom_nav_height"
+    android:orientation="horizontal"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:id="@+id/navHome"
+        style="@style/BottomNavTab">
+
+        <ImageView
+            android:id="@+id/navHomeIcon"
+            style="@style/BottomNavIcon"
+            android:src="@drawable/ic_home_unactive" />
+
+        <TextView
+            android:id="@+id/navHomeLabel"
+            style="@style/BottomNavLabel"
+            android:text="Home" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navTickets"
+        style="@style/BottomNavTab">
+
+        <ImageView
+            android:id="@+id/navTicketsIcon"
+            style="@style/BottomNavIcon"
+            android:src="@drawable/ic_tickets_unactive" />
+
+        <TextView
+            android:id="@+id/navTicketsLabel"
+            style="@style/BottomNavLabel"
+            android:text="Tickets" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navLines"
+        style="@style/BottomNavTab">
+
+        <ImageView
+            android:id="@+id/navLinesIcon"
+            style="@style/BottomNavIcon"
+            android:src="@drawable/ic_lines_unactive" />
+
+        <TextView
+            android:id="@+id/navLinesLabel"
+            style="@style/BottomNavLabel"
+            android:text="Lines" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navAccount"
+        style="@style/BottomNavTab">
+
+        <ImageView
+            android:id="@+id/navAccountIcon"
+            style="@style/BottomNavIcon"
+            android:src="@drawable/ic_person" />
+
+        <TextView
+            android:id="@+id/navAccountLabel"
+            style="@style/BottomNavLabel"
+            android:text="Account" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -10,4 +10,8 @@
     <dimen name="train_image_size">120dp</dimen>
     <dimen name="avatar_size">48dp</dimen>
     <dimen name="content_max_width">600dp</dimen>
+    <!-- Bottom navigation bar -->
+    <dimen name="bottom_nav_height">68dp</dimen>
+    <dimen name="bottom_nav_icon_size">24dp</dimen>
+    <dimen name="bottom_nav_text_size">11sp</dimen>
 </resources>

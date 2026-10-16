@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Red error message shown above a text box (Login / Sign Up) -->
+<resources>
+    <style name="FieldErrorText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:drawableStart">@drawable/ic_warning_red</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/plusjakartasans</item>
+        <item name="android:textColor">@color/error_red</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:accessibilityLiveRegion">polite</item>
+    </style>
+</resources>

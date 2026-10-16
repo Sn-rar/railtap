@@ -78,6 +78,7 @@ class BookingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_booking)
         applySystemBarPadding() // keep content out from under the status/navigation bars
+        setupBottomNav(this, NavTab.HOME)
 
         val line = intent.getStringExtra(EXTRA_LINE)
         findViewById<TextView>(R.id.tvToolbarTitle).text = when (line) {
@@ -236,10 +237,9 @@ class BookingActivity : AppCompatActivity() {
     // ------------------------------------------------------------------
 
     private fun setupPayment() {
-        // The payments table only allows method = 'paypal', so hide the
-        // alternative wallet option and the "Change" link.
-        findViewById<View>(R.id.optRTWallet).visibility = View.GONE
-        findViewById<View>(R.id.btnChangePayment).visibility = View.GONE
+        // PayPal is the only payment option, so there's nothing to "Change" to.
+        // (The other wallet option was removed from activity_booking.xml.)
+        findViewById<View>(R.id.btnChangePayment)?.visibility = View.GONE
     }
 
     // ------------------------------------------------------------------
