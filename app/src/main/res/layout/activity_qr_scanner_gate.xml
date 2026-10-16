@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="16dp"
-            android:text="Automatic demo mode: first scan enters, second scan exits. No station selection needed."
+            android:text="First scan enters, Second scan exits"
             android:textColor="#62718A"
             android:textSize="13sp" />
 
@@ -129,13 +129,5 @@
             android:backgroundTint="#6B46C1"
             app:cornerRadius="14dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="SCANNER ONLY • AUTOMATIC ENTRY + EXIT • SUPABASE VERIFIED"
-            android:textColor="#94A3B8"
-            android:textSize="11sp" />
     </LinearLayout>
 </ScrollView>
