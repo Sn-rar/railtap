@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+/railtap_*_backup_*/
