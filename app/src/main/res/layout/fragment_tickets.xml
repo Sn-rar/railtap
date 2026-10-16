@@ -170,18 +170,17 @@
                 <!-- Line Pill -->
                 <TextView
                     android:id="@+id/lrt2Pill"
+                    android:fontFamily="@font/plus_jakarta_sans_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_purple_pill"
-                    android:fontFamily="@font/plusjakartasans"
+                    android:background="@drawable/bg_pill_purple_solid"
                     android:paddingStart="12dp"
                     android:paddingTop="4dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="4dp"
                     android:text="--"
                     android:textColor="@android:color/white"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
+                    android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -224,7 +223,12 @@
 
                 <TextView
                     android:id="@+id/originStation"
-                    android:layout_width="wrap_content"
+                    android:textAllCaps="true"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    app:layout_constraintEnd_toStartOf="@id/arrow1"
+                    android:layout_marginEnd="8dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/plusjakartasans"
@@ -239,12 +243,12 @@
                 <!-- Arrow Icon -->
                 <ImageView
                     android:id="@+id/arrow1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_width="38dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="@id/originStation"
-                    app:layout_constraintEnd_toStartOf="@id/destinationStation"
-                    app:layout_constraintStart_toEndOf="@id/originStation"
                     app:layout_constraintTop_toTopOf="@id/originStation"
                     app:tint="#6B46C1" />
 
@@ -264,7 +268,13 @@
 
                 <TextView
                     android:id="@+id/destinationStation"
-                    android:layout_width="wrap_content"
+                    android:textAllCaps="true"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    app:layout_constraintStart_toEndOf="@id/arrow1"
+                    android:gravity="end"
+                    android:layout_marginStart="8dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/plusjakartasans"

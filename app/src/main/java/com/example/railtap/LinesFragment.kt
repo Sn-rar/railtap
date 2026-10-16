@@ -226,6 +226,7 @@ class LinesFragment : TabFragment(R.layout.fragment_lines) {
 
         tvFrom.text = a?.name ?: getString(R.string.travel_origin)
         tvTo.text = b?.name ?: getString(R.string.travel_destination)
+        fitStationPair(tvFrom, tvTo, maxLines = 1)
         tint(dotFrom, a)
         tint(dotTo, b)
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- used by fitStationPair to remember the original text size -->
+    <item name="station_max_text_size" type="id" />
+</resources>

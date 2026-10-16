@@ -110,6 +110,7 @@ class BookingActivity : AppCompatActivity() {
 
         tvOrigin.text = "Select station"
         tvDestination.text = "Select station"
+        fitStationPair(tvOrigin, tvDestination)
         renderAll()
         loadInitialData()
     }
@@ -171,6 +172,7 @@ class BookingActivity : AppCompatActivity() {
             showStationPicker("Origin Station", exclude = destination) {
                 origin = it
                 tvOrigin.text = it.name
+                fitStationPair(tvOrigin, tvDestination)
                 loadFare()
             }
         }
@@ -178,6 +180,7 @@ class BookingActivity : AppCompatActivity() {
             showStationPicker("Destination Station", exclude = origin) {
                 destination = it
                 tvDestination.text = it.name
+                fitStationPair(tvOrigin, tvDestination)
                 loadFare()
             }
         }

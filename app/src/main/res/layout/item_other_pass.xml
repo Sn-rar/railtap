@@ -11,16 +11,16 @@
 
     <TextView
         android:id="@+id/itemLinePill"
+        android:fontFamily="@font/plus_jakarta_sans_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_purple_pill"
+        android:background="@drawable/bg_pill_purple_solid"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:text="LRT-2"
-        android:textSize="11sp"
-        android:textStyle="bold"
+        android:textSize="12sp"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -69,6 +69,8 @@
 
     <TextView
         android:id="@+id/itemOriginStation"
+        android:textAllCaps="true"
+        android:ellipsize="end"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -96,6 +98,8 @@
 
     <TextView
         android:id="@+id/itemDestinationStation"
+        android:textAllCaps="true"
+        android:ellipsize="end"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

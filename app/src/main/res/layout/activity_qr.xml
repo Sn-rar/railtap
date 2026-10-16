@@ -124,6 +124,7 @@
                             android:textColor="#9CA9BD" />
                         <TextView
                             android:id="@+id/tvOrigin"
+                            android:ellipsize="end"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -159,6 +160,7 @@
                             android:textColor="#9CA9BD" />
                         <TextView
                             android:id="@+id/tvDestination"
+                            android:ellipsize="end"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"

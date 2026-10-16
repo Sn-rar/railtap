@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -191,6 +192,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
 
             card.findViewById<TextView>(R.id.tripOrigin).text = pass.origin
             card.findViewById<TextView>(R.id.tripDestination).text = pass.destination
+            fitStationPair(card.findViewById(R.id.tripOrigin), card.findViewById(R.id.tripDestination))
 
             val pill = card.findViewById<TextView>(R.id.tripLine)
             pill.text = pass.lineName
@@ -227,8 +229,9 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         val color = Color.parseColor(if (lrt1) "#00875A" else "#6B56C8")
         findViewById<TextView>(R.id.lrt2Pill).apply {
             text = pass.lineName
-            setBackgroundResource(if (lrt1) R.drawable.bg_rt_lrt1_label else R.drawable.bg_purple_pill)
-            setTextColor(Color.WHITE)
+            // same pill as completed journeys
+            setBackgroundResource(if (lrt1) R.drawable.bg_pill_green else R.drawable.bg_pill_purple_solid)
+            setTextColor(if (lrt1) ContextCompat.getColor(requireContext(), R.color.green_line) else Color.WHITE)
         }
         val enteredCount = pass.tickets.count { it.status == "entered" }
         findViewById<TextView>(R.id.passengersBadge).text = if (enteredCount > 0) {
@@ -238,6 +241,7 @@ class TicketsFragment : TabFragment(R.layout.fragment_tickets) {
         }
         findViewById<TextView>(R.id.originStation).text = pass.origin
         findViewById<TextView>(R.id.destinationStation).text = pass.destination
+        fitStationPair(findViewById(R.id.originStation), findViewById(R.id.destinationStation))
         findViewById<ImageView>(R.id.arrow1).setColorFilter(color)
         findViewById<MaterialButton>(R.id.btnShowAllQR).apply {
             backgroundTintList = ColorStateList.valueOf(color)
@@ -286,11 +290,12 @@ class OtherPassesAdapter(
         val lrt1 = pass.lineName == "LRT-1"
         val color = Color.parseColor(if (lrt1) "#00875A" else "#6B56C8")
         holder.badge.text = pass.lineName
-        holder.badge.setBackgroundResource(if (lrt1) R.drawable.bg_rt_lrt1_label else R.drawable.bg_purple_pill)
-        holder.badge.setTextColor(Color.WHITE)
+        holder.badge.setBackgroundResource(if (lrt1) R.drawable.bg_pill_green else R.drawable.bg_pill_purple_solid)
+        holder.badge.setTextColor(if (lrt1) ContextCompat.getColor(holder.itemView.context, R.color.green_line) else Color.WHITE)
         holder.passengers.text = "${pass.passengersCount} PASSENGER${if (pass.passengersCount == 1) "" else "S"}"
         holder.origin.text = pass.origin
         holder.destination.text = pass.destination
+        fitStationPair(holder.origin, holder.destination)
         holder.arrow.setColorFilter(color)
         holder.expiry.text = pass.expiryDisplay
         holder.showQR.text = if (pass.tickets.any { it.status == "entered" }) "SHOW QR FOR EXIT" else "SHOW QR CODE"

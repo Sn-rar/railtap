@@ -82,6 +82,7 @@ class ReceiptActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvReceiptTotalFare).text = peso.format(total)
         findViewById<TextView>(R.id.tvReceiptOrigin).text = intent.getStringExtra(EXTRA_ORIGIN) ?: "--"
         findViewById<TextView>(R.id.tvReceiptDestination).text = intent.getStringExtra(EXTRA_DESTINATION) ?: "--"
+        fitStationPair(findViewById(R.id.tvReceiptOrigin), findViewById(R.id.tvReceiptDestination))
         findViewById<TextView>(R.id.tvReceiptMethod).text = "PayPal"
         findViewById<TextView>(R.id.tvReceiptReference).text = intent.getStringExtra(EXTRA_REFERENCE_NO) ?: "--"
         findViewById<TextView>(R.id.tvReceiptDateTime).text =

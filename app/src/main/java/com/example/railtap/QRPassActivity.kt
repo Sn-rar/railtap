@@ -117,6 +117,7 @@ class QRPassActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.refNumber).text = "Ref # ${group.referenceNo}"
         findViewById<TextView>(R.id.tvOrigin).text = group.origin.uppercase(Locale.getDefault())
         findViewById<TextView>(R.id.tvDestination).text = group.destination.uppercase(Locale.getDefault())
+        fitStationPair(findViewById(R.id.tvOrigin), findViewById(R.id.tvDestination), minSp = 9f)
         findViewById<ImageView>(R.id.routeArrow).setColorFilter(color)
         findViewById<TextView>(R.id.cardPassengerTitle).text = "Passenger ${selected + 1}"
         findViewById<TextView>(R.id.cardFareType).text = "${person.fareType} Fare | Single Journey"

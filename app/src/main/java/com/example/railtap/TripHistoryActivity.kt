@@ -66,6 +66,7 @@ class TripHistoryActivity : LegalBaseActivity() {
 
         card.findViewById<TextView>(R.id.tripOrigin).text = origin
         card.findViewById<TextView>(R.id.tripDestination).text = destination
+        fitStationPair(card.findViewById(R.id.tripOrigin), card.findViewById(R.id.tripDestination))
 
         // green = LRT-1, purple = LRT-2
         val pill = card.findViewById<TextView>(R.id.tripLine)
