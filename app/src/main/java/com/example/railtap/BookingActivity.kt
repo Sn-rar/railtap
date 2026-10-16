@@ -76,6 +76,13 @@ class BookingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (ScannerOnlyRole.isScanner()) {
+            startActivity(Intent(this, GateScannerActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            finish()
+            return
+        }
         setContentView(R.layout.activity_booking)
         applySystemBarPadding() // keep content out from under the status/navigation bars
 

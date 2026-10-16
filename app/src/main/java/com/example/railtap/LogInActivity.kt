@@ -44,7 +44,14 @@ class LogInActivity : AppCompatActivity() {
                         this.password = password
                     }
                     Toast.makeText(this@LogInActivity, "Welcome back!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@LogInActivity, DashboardActivity::class.java))
+                    val nextScreen = if (ScannerOnlyRole.isScanner()) {
+                        GateScannerActivity::class.java
+                    } else {
+                        DashboardActivity::class.java
+                    }
+                    startActivity(Intent(this@LogInActivity, nextScreen).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
                     finish()
                 } catch (e: Exception) {
                     Toast.makeText(

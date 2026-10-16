@@ -13,7 +13,12 @@ class SplashActivity : AppCompatActivity() {
         applySystemBarPadding() // keep content out from under the status/navigation bars
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, LogInActivity::class.java))
+            val nextScreen = if (ScannerOnlyRole.isScanner()) {
+                GateScannerActivity::class.java
+            } else {
+                LogInActivity::class.java
+            }
+            startActivity(Intent(this, nextScreen))
             finish() // removes SplashActivity from the back stack
         }, 3000) // 3000ms = 3 seconds
     }
