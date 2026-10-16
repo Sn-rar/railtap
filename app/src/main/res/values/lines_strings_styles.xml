@@ -1,0 +1,21 @@
+<resources>
+    <string name="lines_pill_lrt1">LRT 1</string>
+    <string name="lines_pill_lrt2">LRT 2</string>
+    <string name="lines_pill_lrt1_desc">Show LRT 1</string>
+    <string name="lines_pill_lrt2_desc">Show LRT 2</string>
+
+    <style name="LinesPill">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:minWidth">96dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans_extrabold</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Default: small phones (narrower than 360dp) -->
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="text_heading">22sp</dimen>
+    <dimen name="text_section_title">18sp</dimen>
+    <dimen name="text_card_title">17sp</dimen>
+    <dimen name="text_stat_value">22sp</dimen>
+    <dimen name="train_image_size">92dp</dimen>
+    <dimen name="avatar_size">44dp</dimen>
+    <dimen name="content_max_width">600dp</dimen>
+</resources>

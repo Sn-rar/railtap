@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Payment receipt shown after a successful PayPal payment (ReceiptActivity.kt) -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_light">
+
+    <!-- ===== Top bar: X button + title ===== -->
+    <ImageButton
+        android:id="@+id/btnCloseReceipt"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Close"
+        android:src="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvReceiptTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/plusjakartasans"
+        android:text="Payment Receipt"
+        android:textColor="@color/neutral_heading"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/btnCloseReceipt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnCloseReceipt" />
+
+    <View
+        android:id="@+id/topBarDivider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/screen_padding"
+        android:background="@color/neutral_border"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCloseReceipt" />
+
+    <!-- ===== Scrollable receipt content ===== -->
+    <ScrollView
+        android:id="@+id/receiptScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/receiptButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topBarDivider"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <!-- This whole block is what gets saved when "Download Receipt" is tapped -->
+        <LinearLayout
+            android:id="@+id/receiptContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/surface_light"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="24dp"
+            android:paddingEnd="@dimen/screen_padding"
+            android:paddingBottom="24dp">
+
+            <!-- Check mark circle -->
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="@drawable/bg_check_circle"
+                android:contentDescription="Success"
+                android:padding="16dp"
+                android:src="@drawable/ic_check" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="Payment Successful!"
+                android:textColor="@color/neutral_heading"
+                android:textSize="@dimen/text_heading" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:gravity="center"
+                android:lineSpacingExtra="4dp"
+                android:text="Your turnstile passes are now ready to tap at\nstation gates. Valid for 24 hours"
+                android:textColor="#6B7280"
+                android:textSize="14sp" />
+
+            <!-- Total fare box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_total_fare_box"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plus_jakarta_sans_bold"
+                    android:letterSpacing="0.08"
+                    android:text="TOTAL FARE PAID"
+                    android:textColor="@color/brand"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvReceiptTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                    android:text="₱0.00"
+                    android:textColor="@color/neutral_heading"
+                    android:textSize="34sp" />
+            </LinearLayout>
+
+            <!-- Route + details card -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_receipt_card"
+                android:paddingBottom="20dp">
+
+                <!-- Top part (route) -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/routeSection"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/lblTransitRoute"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
+                        android:letterSpacing="0.05"
+                        android:text="TRANSIT ROUTE"
+                        android:textColor="#6B7280"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="@id/tvReceiptLine"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvReceiptLine" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptLine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_pill_purple"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
+                        android:paddingStart="12dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:text="LRT LINE 2"
+                        android:textColor="@color/brand"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/lblOrigin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Origin"
+                        android:textColor="#6B7280"
+                        android:textSize="13sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvReceiptLine" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptOrigin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
+                        android:text="--"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/routeArrow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lblOrigin" />
+
+                    <ImageView
+                        android:id="@+id/routeArrow"
+                        android:layout_width="56dp"
+                        android:layout_height="24dp"
+                        android:contentDescription="to"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_arrow_right"
+                        app:layout_constraintBottom_toBottomOf="@id/tvReceiptOrigin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvReceiptOrigin"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        android:id="@+id/lblDestination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Destination"
+                        android:textColor="#6B7280"
+                        android:textSize="13sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/lblOrigin" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptDestination"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
+                        android:gravity="end"
+                        android:text="--"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/routeArrow"
+                        app:layout_constraintTop_toBottomOf="@id/lblDestination" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Ticket-style divider with half-circle notches -->
+                <View
+                    android:id="@+id/cutoutLeft"
+                    android:layout_width="10dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bg_cutout_left"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/routeSection" />
+
+                <View
+                    android:id="@+id/dashedDivider"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_dashed_line"
+                    android:layerType="software"
+                    app:layout_constraintBottom_toBottomOf="@id/cutoutLeft"
+                    app:layout_constraintEnd_toStartOf="@id/cutoutRight"
+                    app:layout_constraintStart_toEndOf="@id/cutoutLeft"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeft" />
+
+                <View
+                    android:id="@+id/cutoutRight"
+                    android:layout_width="10dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bg_cutout_right"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/cutoutLeft" />
+
+                <!-- Bottom part (details) -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/detailsSection"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cutoutLeft">
+
+                    <Space
+                        android:id="@+id/detailsTop"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/lblTotalFare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Total Fare"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/detailsTop" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptTotalFare"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:gravity="end"
+                        android:text="₱0.00"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBaseline_toBaselineOf="@id/lblTotalFare"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/lblTotalFare" />
+
+                    <TextView
+                        android:id="@+id/lblDateTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Date &amp; Time"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lblTotalFare" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptDateTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:gravity="end"
+                        android:text="--"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="14sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/lblDateTime"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/lblDateTime" />
+
+                    <TextView
+                        android:id="@+id/lblMethod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Payment Method"
+                        android:textColor="#6B7280"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lblDateTime" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptMethod"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:gravity="end"
+                        android:text="PayPal"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="14sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/lblMethod"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/lblMethod" />
+
+                    <TextView
+                        android:id="@+id/lblReference"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Reference No."
+                        android:textColor="#6B7280"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/lblMethod" />
+
+                    <TextView
+                        android:id="@+id/tvReceiptReference"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:gravity="end"
+                        android:text="--"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="14sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/lblReference"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/lblReference" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ===== Bottom buttons (always visible) ===== -->
+    <LinearLayout
+        android:id="@+id/receiptButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="12dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="@dimen/screen_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShowPasses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="56dp"
+            android:backgroundTint="@color/brand"
+            android:fontFamily="@font/plusjakartasans"
+            android:text="Show Turnstile Passes"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_qr_code"
+            app:iconGravity="textStart"
+            app:iconPadding="10dp"
+            app:iconTint="@android:color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDownloadReceipt"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="56dp"
+            android:backgroundTint="@android:color/white"
+            android:fontFamily="@font/plusjakartasans"
+            android:text="Download Receipt"
+            android:textAllCaps="false"
+            android:textColor="@color/neutral_heading"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_download"
+            app:iconGravity="textStart"
+            app:iconPadding="10dp"
+            app:iconTint="@color/neutral_heading"
+            app:strokeColor="@color/neutral_border" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

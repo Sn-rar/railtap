@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805781712433",
+    "project_id": "railtap-ba64c",
+    "storage_bucket": "railtap-ba64c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805781712433:android:82e264f479b34aaf5d2f10",
+        "android_client_info": {
+          "package_name": "com.example.railtap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBq8MXC0h3h_piaY4uG1FT4jHpQIRg-hI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

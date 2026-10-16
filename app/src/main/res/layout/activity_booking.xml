@@ -1,0 +1,891 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6B46C1">
+
+    <!-- Top App Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/toolbarContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingTop="36dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tvToolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/plusjakartasans"
+            android:letterSpacing="0.04"
+            android:text="--"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Main Content Container with Top Rounded Corners -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_sheet_top_rounded"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarContainer">
+
+        <!-- Scrollable Booking Form -->
+        <ScrollView
+            android:id="@+id/scrollBooking"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="16dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/checkoutContainer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 1. Route Summary Card -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/routeCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_ticket_card"
+                    android:elevation="2dp"
+                    android:padding="16dp">
+
+                    <!-- Vertical Transit Dot & Line Indicator -->
+                    <View
+                        android:id="@+id/dotOrigin"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_dot_purple"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/routeDottedLine"
+                        android:layout_width="2dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_dashed_line_vertical"
+                        app:layout_constraintBottom_toTopOf="@id/dotDestination"
+                        app:layout_constraintEnd_toEndOf="@id/dotOrigin"
+                        app:layout_constraintStart_toStartOf="@id/dotOrigin"
+                        app:layout_constraintTop_toBottomOf="@id/dotOrigin" />
+
+                    <View
+                        android:id="@+id/dotDestination"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="40dp"
+                        android:background="@drawable/bg_dot_purple"
+                        app:layout_constraintStart_toStartOf="@id/dotOrigin"
+                        app:layout_constraintTop_toBottomOf="@id/dotOrigin" />
+
+                    <!-- Origin Box -->
+                    <LinearLayout
+                        android:id="@+id/originBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_station_box"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/dotOrigin"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="Origin Station"
+                            android:textColor="#62718A"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBookingOrigin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="--"
+                            android:textColor="#0B1A30"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Destination Box -->
+                    <LinearLayout
+                        android:id="@+id/destinationBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_station_box"
+                        android:orientation="vertical"
+                        android:paddingStart="16dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/dotOrigin"
+                        app:layout_constraintTop_toBottomOf="@id/originBox">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="Destination Station"
+                            android:textColor="#62718A"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/tvBookingDestination"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="--"
+                            android:textColor="#0B1A30"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Travel Time & Journey Tag -->
+                    <TextView
+                        android:id="@+id/tvTravelTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:drawableStart="@drawable/ic_clock"
+                        android:drawablePadding="6dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="--"
+                        android:textColor="#62718A"
+                        android:textSize="13sp"
+                        app:drawableTint="#62718A"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/destinationBox" />
+
+                    <TextView
+                        android:id="@+id/tagJourneyType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_pill_green_light"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
+                        android:text="Single Journey"
+                        android:textColor="#00875A"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/tvTravelTime"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tvTravelTime" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- 2. Passengers & Discounts Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/passengersCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_ticket_card"
+                    android:elevation="2dp"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/lblPassengers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Passengers &amp; Discounts"
+                        android:textColor="#0B1A30"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- Regular Row -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/rowRegular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_passenger_row"
+                        android:padding="12dp"
+                        app:layout_constraintTop_toBottomOf="@id/lblPassengers">
+
+                        <TextView
+                            android:id="@+id/lblRegular"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="Regular"
+                            android:textColor="#0B1A30"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tvRegularPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="-- / person"
+                            android:textColor="#62718A"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/lblRegular" />
+
+                        <!-- Counter Controls -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/btnMinusRegular"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_minus"
+                                android:gravity="center"
+                                android:text="–"
+                                android:textColor="#0B1A30"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountRegular"
+                                android:layout_width="32dp"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/plusjakartasans"
+                                android:gravity="center"
+                                android:text="0"
+                                android:textColor="#0B1A30"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btnPlusRegular"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_plus"
+                                android:gravity="center"
+                                android:text="+"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Student Row -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/rowStudent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_passenger_row"
+                        android:padding="12dp"
+                        app:layout_constraintTop_toBottomOf="@id/rowRegular">
+
+                        <TextView
+                            android:id="@+id/lblStudent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="Student"
+                            android:textColor="#0B1A30"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/badgeStudentDiscount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_pill_green_light"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:paddingStart="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="6dp"
+                            android:paddingBottom="2dp"
+                            android:text="--"
+                            android:textColor="#00875A"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/lblStudent"
+                            app:layout_constraintStart_toEndOf="@id/lblStudent"
+                            app:layout_constraintTop_toTopOf="@id/lblStudent" />
+
+                        <TextView
+                            android:id="@+id/tvStudentPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="-- / person"
+                            android:textColor="#62718A"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/lblStudent" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/btnMinusStudent"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_minus"
+                                android:gravity="center"
+                                android:text="–"
+                                android:textColor="#94A3B8"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountStudent"
+                                android:layout_width="32dp"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/plusjakartasans"
+                                android:gravity="center"
+                                android:text="0"
+                                android:textColor="#0B1A30"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btnPlusStudent"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_plus"
+                                android:gravity="center"
+                                android:text="+"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- Senior / PWD Row -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/rowSenior"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_passenger_row"
+                        android:padding="12dp"
+                        app:layout_constraintTop_toBottomOf="@id/rowStudent">
+
+                        <TextView
+                            android:id="@+id/lblSenior"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="Senior / PWD"
+                            android:textColor="#0B1A30"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/badgeSeniorDiscount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_pill_green_light"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:paddingStart="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="6dp"
+                            android:paddingBottom="2dp"
+                            android:text="--"
+                            android:textColor="#00875A"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/lblSenior"
+                            app:layout_constraintStart_toEndOf="@id/lblSenior"
+                            app:layout_constraintTop_toTopOf="@id/lblSenior" />
+
+                        <TextView
+                            android:id="@+id/tvSeniorPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/plusjakartasans"
+                            android:text="-- / person"
+                            android:textColor="#62718A"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/lblSenior" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:id="@+id/btnMinusSenior"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_minus"
+                                android:gravity="center"
+                                android:text="–"
+                                android:textColor="#94A3B8"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCountSenior"
+                                android:layout_width="32dp"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/plusjakartasans"
+                                android:gravity="center"
+                                android:text="0"
+                                android:textColor="#0B1A30"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/btnPlusSenior"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_counter_plus"
+                                android:gravity="center"
+                                android:text="+"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- ID Warning Hint -->
+                    <TextView
+                        android:id="@+id/tvDiscountNotice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:drawableStart="@drawable/ic_info_outline"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Valid ID required for discounted fares at the turnstile"
+                        android:textColor="#62718A"
+                        android:textSize="12sp"
+                        app:drawableTint="#6B46C1"
+                        app:layout_constraintTop_toBottomOf="@id/rowSenior" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- 3. Payment Method Section -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/paymentHeaderLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:id="@+id/lblPaymentMethod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Payment Method"
+                        android:textColor="#0B1A30"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/btnChangePayment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Change"
+                        android:textColor="#62718A"
+                        android:textSize="13sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- Maya Wallet Option -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/optMayaWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_payment_card_selected"
+                    android:padding="14dp">
+
+                    <ImageView
+                        android:id="@+id/iconMaya"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_maya_logo"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/lblMayaWallet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="PayPal"
+                        android:textColor="#0B1A30"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/iconMaya"
+                        app:layout_constraintTop_toTopOf="@id/iconMaya" />
+
+                    <TextView
+                        android:id="@+id/tvMayaStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Linked e-wallet"
+                        android:textColor="#62718A"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toEndOf="@id/iconMaya"
+                        app:layout_constraintTop_toBottomOf="@id/lblMayaWallet" />
+
+                    <ImageView
+                        android:id="@+id/radioMaya"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_radio_checked"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="#6B46C1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- RT Wallet Option -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/optRTWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_payment_card_unselected"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:id="@+id/iconRT"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_pill_purple"
+                        android:gravity="center"
+                        android:text="RT"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/lblRTWallet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Wallet"
+                        android:textColor="#0B1A30"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/iconRT"
+                        app:layout_constraintTop_toTopOf="@id/iconRT" />
+
+                    <TextView
+                        android:id="@+id/tvRTBalance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:text="Balance: --"
+                        android:textColor="#62718A"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toEndOf="@id/iconRT"
+                        app:layout_constraintTop_toBottomOf="@id/lblRTWallet" />
+
+                    <ImageView
+                        android:id="@+id/radioRT"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_radio_unchecked"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="#CBD5E1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Checkout Bottom Container -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/checkoutContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:elevation="8dp"
+            android:paddingStart="20dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/lblTotalAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Total Amount"
+                android:textColor="#62718A"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTicketSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="--"
+                android:textColor="#6B46C1"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lblTotalAmount" />
+
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="--"
+                android:textColor="#0B1A30"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/lblVatNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Includes government VAT"
+                android:textColor="#94A3B8"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTotalPrice" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProceedPayment"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="14dp"
+                android:backgroundTint="#6B46C1"
+                android:fontFamily="@font/plusjakartasans"
+                android:letterSpacing="0.03"
+                android:text="Proceed to Payment  →"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:layout_constraintTop_toBottomOf="@id/tvTicketSummary" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:background="@android:color/white"
+        android:elevation="12dp"
+        android:orientation="horizontal"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_home_active"
+                app:tint="#6B46C1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Home"
+                android:textColor="#6B46C1"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_tickets_unactive"
+                app:tint="#94A3B8" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Tickets"
+                android:textColor="#94A3B8"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_lines_unactive"
+                app:tint="#94A3B8" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Lines"
+                android:textColor="#94A3B8"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_person"
+                app:tint="#94A3B8" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Account"
+                android:textColor="#94A3B8"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

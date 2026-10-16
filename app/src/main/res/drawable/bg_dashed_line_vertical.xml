@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- shape="line" is always horizontal, so rotate it 90 degrees -->
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="90" android:toDegrees="90"
+    android:pivotX="50%" android:pivotY="50%">
+    <shape android:shape="line">
+        <stroke android:width="2dp" android:color="#C4B5FD"
+            android:dashWidth="6dp" android:dashGap="4dp" />
+    </shape>
+</rotate>

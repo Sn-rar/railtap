@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Base layer (empty). Add rivers / background art here. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1332dp" android:height="1278dp" android:viewportWidth="2665" android:viewportHeight="2555">
+    <path android:fillColor="#00000000" android:pathData="M0,0 L1,0"/>
+</vector>

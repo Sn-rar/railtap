@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tablets and large screens (600dp wide and up) -->
+<resources>
+    <dimen name="screen_padding">32dp</dimen>
+    <dimen name="card_padding">24dp</dimen>
+    <dimen name="text_heading">32sp</dimen>
+    <dimen name="text_section_title">24sp</dimen>
+    <dimen name="text_card_title">24sp</dimen>
+    <dimen name="text_stat_value">30sp</dimen>
+    <dimen name="train_image_size">160dp</dimen>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="content_max_width">600dp</dimen>
+</resources>

@@ -1,0 +1,7 @@
+country_code,account_type,primary_email_alias,password,first_name,last_name,ppBalance,addBank,ccType,payment_card
+PH,PERSONAL,sheila.geronimo.railtap@personal.example.com,Railtap#26,Sheila,Geronimo,1001,Y,VISA,
+PH,PERSONAL,ryan.butalid.railtap@personal.example.com,Railtap#26,Ryan,Butalid,1002,N,VISA,
+PH,PERSONAL,cathyrine.manabat.railtap@personal.example.com,Railtap#26,Cathyrine Joyce Ann,Manabat,1003,Y,MASTERCARD,
+PH,PERSONAL,catherine.estrada.railtap@personal.example.com,Railtap#26,Catherine,Estrada,1004,N,MASTERCARD,
+PH,PERSONAL,christine.rarugal.railtap@personal.example.com,Railtap#26,Ma Christine Asuncion,Rarugal,1005,Y,VISA,
+PH,PERSONAL,erin.baja.railtap@personal.example.com,Railtap#26,Erin Jasmine,Baja,1006,N,MASTERCARD,
