@@ -3,15 +3,15 @@ package com.example.railtap
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 
-class LinesActivity : AppCompatActivity() {
+/** Lines tab (map). Layout: fragment_lines.xml */
+class LinesFragment : TabFragment(R.layout.fragment_lines) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_lines)
-
-        setupBottomNav(this, NavTab.LINES)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Header title (same style as the Tickets tab); changes with the selected line
+        val title = findViewById<TextView>(R.id.tvTitle)
+        title.text = "LINES"
 
         val map = findViewById<LinesMapView>(R.id.linesMap)
         val pills = findViewById<View>(R.id.linePills)
@@ -26,6 +26,12 @@ class LinesActivity : AppCompatActivity() {
 
         // Pills are indicators: lit = line is active. With no selection both are lit.
         fun render(selected: MapLine?) {
+            // Header title follows the selected line
+            title.text = when (selected) {
+                MapLine.LRT1 -> "LRT LINE 1"
+                MapLine.LRT2 -> "LRT LINE 2"
+                null -> "LINES"
+            }
             fun apply(pill: TextView, line: MapLine) {
                 val active = selected == null || selected == line
                 pill.animate().alpha(if (active) 1f else 0.4f).setDuration(200).start()

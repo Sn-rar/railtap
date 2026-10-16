@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
 
@@ -28,9 +30,15 @@ class SignUpActivity : AppCompatActivity() {
         val confirmPasswordInput = findViewById<TextInputEditText>(R.id.confirmPasswordInput)
         val signUpButton = findViewById<Button>(R.id.signUpButton)
 
+        // Red error messages above the password boxes
+        val passwordError = findViewById<TextView>(R.id.passwordError)
+        val confirmPasswordError = findViewById<TextView>(R.id.confirmPasswordError)
+        hideErrorWhenTyping(passwordError, passwordInput)
+        hideErrorWhenTyping(confirmPasswordError, passwordInput, confirmPasswordInput)
+
         // Back button
         backButton.setOnClickListener {
-            startActivity(Intent(this, LogInActivity::class.java))
+            finish() // the Login screen is already behind this one
         }
 
         // Sign up logic
@@ -45,15 +53,21 @@ class SignUpActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
+            // Check both password rules and show every problem at once
+            var hasError = false
             if (password.length < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+                passwordError.showError("Password must be at least 6 characters")
+                hasError = true
+            } else {
+                passwordError.hideError()
             }
+            if (password != confirmPassword) {
+                confirmPasswordError.showError("Passwords do not match")
+                hasError = true
+            } else {
+                confirmPasswordError.hideError()
+            }
+            if (hasError) return@setOnClickListener
 
             signUpButton.isEnabled = false
 

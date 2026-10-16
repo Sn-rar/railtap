@@ -32,6 +32,7 @@ class ReceiptActivity : AppCompatActivity() {
         private const val EXTRA_DESTINATION = "extra_destination"
         private const val EXTRA_REFERENCE_NO = "extra_reference_no"
         private const val EXTRA_PAID_AT = "extra_paid_at"
+        private const val EXTRA_FROM_HISTORY = "extra_from_history"
 
         /** Opens the receipt screen with the booking details. */
         fun open(
@@ -40,7 +41,9 @@ class ReceiptActivity : AppCompatActivity() {
             lineCode: String,       // "LRT1" or "LRT2"
             origin: String,
             destination: String,
-            referenceNo: String
+            referenceNo: String,
+            paidAtMillis: Long = System.currentTimeMillis(), // when it was paid
+            fromHistory: Boolean = false // true = opened from Trip History (back goes back there)
         ) {
             val intent = Intent(from, ReceiptActivity::class.java).apply {
                 putExtra(EXTRA_TOTAL, total)
@@ -48,7 +51,8 @@ class ReceiptActivity : AppCompatActivity() {
                 putExtra(EXTRA_ORIGIN, origin)
                 putExtra(EXTRA_DESTINATION, destination)
                 putExtra(EXTRA_REFERENCE_NO, referenceNo)
-                putExtra(EXTRA_PAID_AT, System.currentTimeMillis())
+                putExtra(EXTRA_PAID_AT, paidAtMillis)
+                putExtra(EXTRA_FROM_HISTORY, fromHistory)
             }
             from.startActivity(intent)
         }
@@ -59,6 +63,7 @@ class ReceiptActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_receipt)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         // ---- Read the booking details ----
         val total = intent.getDoubleExtra(EXTRA_TOTAL, 0.0)
@@ -86,19 +91,31 @@ class ReceiptActivity : AppCompatActivity() {
         }
 
         // ---- Buttons ----
-        findViewById<View>(R.id.btnCloseReceipt).setOnClickListener { goHome() }
+        findViewById<View>(R.id.btnCloseReceipt).setOnClickListener { close() }
 
         findViewById<View>(R.id.btnShowPasses).setOnClickListener {
-            startActivity(Intent(this, TicketsActivity::class.java))
+            DashboardActivity.open(this, NavTab.TICKETS) // main screen, Tickets tab
             finish()
         }
 
         findViewById<View>(R.id.btnDownloadReceipt).setOnClickListener { downloadReceipt() }
 
-        // Phone's back button also goes home (not back to the booking/payment screen)
+        // Past trips (opened from Trip History): no "Show Turnstile Passes" button
+        if (intent.getBooleanExtra(EXTRA_FROM_HISTORY, false)) {
+            findViewById<View>(R.id.btnShowPasses).visibility = View.GONE
+            // Old trip: don't say the passes are ready to tap
+            findViewById<TextView>(R.id.tvReceiptMessage).text = "This trip was paid with PayPal."
+        }
+
+        // Phone's back button: same as X (not back to the booking/payment screen)
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() = goHome()
+            override fun handleOnBackPressed() = close()
         })
+    }
+
+    /** X / back: return to Trip History if opened from there, otherwise go Home. */
+    private fun close() {
+        if (intent.getBooleanExtra(EXTRA_FROM_HISTORY, false)) finish() else goHome()
     }
 
     /** Go back to the Dashboard and clear the booking screens behind it. */

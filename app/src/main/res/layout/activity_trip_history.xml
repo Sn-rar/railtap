@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Trip History page (TripHistoryActivity.kt). Each trip card is item_trip_history.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/brand">
+
+    <!-- Purple header like the Booking screen: back arrow + centered title -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_purple_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Light sheet with rounded top corners that the content sits on -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contentSheet"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_sheet_top_rounded"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <ScrollView
+            android:id="@+id/legalScroll"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingTop="28dp"
+            android:paddingEnd="@dimen/screen_padding"
+            android:paddingBottom="32dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/content_max_width">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/historySubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/plusjakartasans"
+                    android:text="Your paid LRT-1 and LRT-2 trips"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <!-- Loading spinner (shown while trips load) -->
+                <ProgressBar
+                    android:id="@+id/historyLoading"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="48dp"
+                    android:indeterminateTint="@color/brand" />
+
+                <!-- Empty / error state (hidden until needed) -->
+                <LinearLayout
+                    android:id="@+id/historyEmptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_receipt_card"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="28dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_check_circle"
+                        android:importantForAccessibility="no"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_ticket"
+                        app:tint="@color/brand" />
+
+                    <TextView
+                        android:id="@+id/historyEmptyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:fontFamily="@font/plus_jakarta_sans_bold"
+                        android:text="No trips yet"
+                        android:textColor="@color/neutral_heading"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/historyEmptyMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:fontFamily="@font/plusjakartasans"
+                        android:gravity="center"
+                        android:text="Trips you pay for will show up here."
+                        android:textColor="#6B7280"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Trip cards are added here in code -->
+                <LinearLayout
+                    android:id="@+id/historyList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

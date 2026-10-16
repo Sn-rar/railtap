@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_light">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_legal_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/legalScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="24dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="32dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="RailTap — Tap, Scan, and Go!"
+                android:textColor="@color/neutral_heading"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/LegalBody"
+                android:layout_marginTop="16dp"
+                android:text="RailTap is a smart commuting solution designed to make traveling through Light Rail Transit (LRT) Lines 1 and 2 more convenient, accessible, and efficient. By integrating Near Field Communication (NFC) technology and QR code-based transactions, RailTap aims to simplify the commuting experience and provide passengers with a modern alternative to traditional fare payment methods." />
+
+            <TextView
+                style="@style/LegalBody"
+                android:layout_marginTop="16dp"
+                android:text="With RailTap, commuters can access a digital platform for managing their transit transactions, checking fare information, and making payments through supported payment methods. Designed with convenience and ease of use in mind, RailTap aims to reduce the hassle of everyday commuting while promoting a more seamless and digitally connected transportation experience." />
+
+            <TextView
+                style="@style/LegalBody"
+                android:layout_marginTop="16dp"
+                android:text="Whether you're traveling for school, work, or leisure, RailTap is built to help make your daily journey simpler, faster, and more convenient." />
+
+            <View
+                style="@style/LegalDivider"
+                android:layout_marginTop="32dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="RailTap — Your Journey, One Tap Away."
+                android:textColor="@color/brand"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LegalBody">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:fontFamily">@font/plusjakartasans</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:textColor">@color/legal_body</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="LegalBodySmall" parent="LegalBody">
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="LegalBodyDark" parent="LegalBodySmall">
+        <item name="android:textColor">@color/neutral_heading</item>
+    </style>
+
+    <style name="LegalSection">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="LegalSectionTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/plus_jakarta_sans_extrabold</item>
+        <item name="android:textColor">@color/neutral_heading</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LegalSectionTitleBrand" parent="LegalSectionTitle">
+        <item name="android:textColor">@color/brand</item>
+    </style>
+
+    <style name="LegalDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:background">@color/legal_divider</item>
+    </style>
+
+    <style name="LegalBulletRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="LegalBulletDot">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/plusjakartasans</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:text">•</item>
+        <item name="android:textColor">@color/neutral_heading</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="LegalBulletText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">@font/plusjakartasans</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:textColor">@color/neutral_heading</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="LegalBulletTextSmall" parent="LegalBulletText">
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+</resources>

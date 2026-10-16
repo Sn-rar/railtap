@@ -17,12 +17,15 @@ class LogInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        applySystemBarPadding() // keep content out from under the status/navigation bars
 
         // 1. Find the views by their IDs from the XML layout
         val emailInput = findViewById<TextInputEditText>(R.id.emailInput)
         val passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
         val signInButton = findViewById<Button>(R.id.signInButton)
         val signUpLink = findViewById<TextView>(R.id.signUpLink)
+        val passwordError = findViewById<TextView>(R.id.passwordError) // red text above the password box
+        hideErrorWhenTyping(passwordError, emailInput, passwordInput)
 
         // 2. Set click listener for the Sign In button
         signInButton.setOnClickListener {
@@ -30,9 +33,10 @@ class LogInActivity : AppCompatActivity() {
             val password = passwordInput.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
+                passwordError.showError("Please enter your email and password")
                 return@setOnClickListener
             }
+            passwordError.hideError()
 
             signInButton.isEnabled = false
 
@@ -46,14 +50,34 @@ class LogInActivity : AppCompatActivity() {
                     startActivity(Intent(this@LogInActivity, DashboardActivity::class.java))
                     finish()
                 } catch (e: Exception) {
-                    Toast.makeText(
-                        this@LogInActivity,
-                        "Sign in failed: ${e.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    val msg = e.message.orEmpty()
+                    when {
+                        // Wrong email or password
+                        msg.contains("invalid", ignoreCase = true) &&
+                            msg.contains("credentials", ignoreCase = true) ->
+                            passwordError.showError("Incorrect email or password")
+
+                        // Account made but email not confirmed yet
+                        msg.contains("not confirmed", ignoreCase = true) ->
+                            passwordError.showError("Please confirm your email first, then sign in")
+
+                        // Anything else (e.g. no internet)
+                        else -> Toast.makeText(
+                            this@LogInActivity,
+                            "Sign in failed: $msg",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                     signInButton.isEnabled = true
                 }
             }
+        }
+
+        // "Forgot password?" opens the Forgot Password page (with the email pre-filled)
+        findViewById<TextView>(R.id.forgotPasswordText).setOnClickListener {
+            startActivity(Intent(this, ForgotPasswordActivity::class.java).apply {
+                putExtra(ForgotPasswordActivity.EXTRA_EMAIL, emailInput.text.toString().trim())
+            })
         }
 
         // 3. Set click listener for the Sign Up text at the bottom

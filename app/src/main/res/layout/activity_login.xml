@@ -122,6 +122,9 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
+            <!-- Error message (hidden until there's a problem) -->
+
+
             <!-- Password Input -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -153,6 +156,15 @@
                     android:textColorHint="@color/neutral_subtle"
                     android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/passwordError"
+                style="@style/FieldErrorText"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Incorrect email or password" />
 
             <!-- Sign In Button -->
             <Button

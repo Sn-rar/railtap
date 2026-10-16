@@ -32,7 +32,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".TicketsActivity"
+            android:name=".TripHistoryActivity"
             android:exported="false" />
 
         <!-- PayPal sends the user back here via railtap://paypal/return or /cancel -->
@@ -53,8 +53,37 @@
             android:exported="false" />
 
         <activity
-            android:name=".LinesActivity"
-            android:exported="true" />
+            android:name=".AboutActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".PrivacyPolicyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".TermsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ContactUsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <!-- Opens from the password reset email link: railtap://reset-password -->
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="railtap" android:host="reset-password" />
+            </intent-filter>
+        </activity>
 
     </application>
 </manifest>

@@ -28,4 +28,8 @@
     <color name="bottom_nav_inactive">#9CA3AF</color>
 
     <color name="bg_avatar">#E2E8F0</color>
+
+    <color name="logout_red">#D92D20</color>
+    <color name="error_red">#D92D20</color>
+    <color name="account_divider">#F3F4F6</color>
 </resources>

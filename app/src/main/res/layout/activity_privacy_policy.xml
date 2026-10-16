@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/surface_light">
+
+    <include
+        android:id="@+id/header"
+        layout="@layout/layout_legal_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/legalScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/screen_padding"
+        android:paddingTop="16dp"
+        android:paddingEnd="@dimen/screen_padding"
+        android:paddingBottom="32dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintWidth_max="@dimen/content_max_width">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/plus_jakarta_sans_extrabold"
+                android:text="Privacy Policy"
+                android:textColor="@color/neutral_heading"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/plusjakartasans"
+                android:text="Effective Date: October 15, 2026"
+                android:textColor="@color/legal_body"
+                android:textSize="12sp" />
+
+            <View
+                style="@style/LegalDivider"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                style="@style/LegalBody"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/neutral_heading"
+                android:text="RailTap respects your privacy and is committed to protecting the personal information of its users. This Privacy Policy explains how RailTap collects, uses, stores, and protects information when you use our application for LRT-1 and LRT-2 commuting." />
+
+            <!-- 1 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="1. Information We Collect" />
+
+                <TextView
+                    style="@style/LegalBodySmall"
+                    android:text="Depending on the features you use, RailTap may collect the following information:" />
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="@string/privacy_info_transaction" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="@string/privacy_info_payment" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="@string/privacy_info_qrnfc" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="@string/privacy_info_device" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="@string/privacy_info_contact" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/LegalBodySmall"
+                    android:text="The information collected depends on the features available and your use of the application." />
+            </LinearLayout>
+
+            <!-- 2 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="2. How We Use Your Information" />
+
+                <TextView
+                    style="@style/LegalBodySmall"
+                    android:text="RailTap may use collected information to:" />
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Process and record transit-related transactions." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Facilitate supported NFC and QR code-based functions." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Display transaction histories and payment statuses." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Calculate or display applicable fares between stations." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Respond to questions, complaints, and support requests." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Maintain application security and investigate suspicious activity." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Troubleshoot technical problems and improve application performance." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Comply with applicable legal obligations." />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 3 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="3. Data Storage and Security" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap applies reasonable technical and organizational measures to help protect user information against unauthorized access, disclosure, alteration, or loss." />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="Information may be stored using database and cloud services used by the application. Access should be limited to authorized individuals and systems that require the information to perform their responsibilities." />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="However, no electronic storage system or method of transmission can be guaranteed to be completely secure." />
+            </LinearLayout>
+
+            <!-- 4 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="4. Sharing of Information" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap does not sell users' personal information." />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="Information may be shared only when reasonably necessary to operate the application, such as with authorized service providers, supported payment processors, or parties required by applicable law. Information may also be disclosed when necessary to protect the security and integrity of the application or its users." />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="Any third-party services used by RailTap may process information according to their own privacy policies and applicable agreements." />
+            </LinearLayout>
+
+            <!-- 5 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="5. Data Retention" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap retains information only for as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, maintain transaction records, resolve disputes, or comply with applicable legal requirements." />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="Retention periods depend on the type of information and the operational or legal requirements involved. When information is no longer needed, it should be securely deleted or anonymized where appropriate." />
+            </LinearLayout>
+
+            <!-- 6 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="6. Your Privacy Rights" />
+
+                <TextView
+                    style="@style/LegalBodySmall"
+                    android:text="Subject to applicable law, users may have the right to:" />
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Request access to their personal information." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Request correction of inaccurate or incomplete information." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Request deletion or blocking of personal information where legally applicable." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Withdraw consent where processing is based on consent." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="Object to or restrict certain processing activities where applicable." />
+                </LinearLayout>
+
+                <LinearLayout style="@style/LegalBulletRow">
+                    <TextView style="@style/LegalBulletDot" />
+                    <TextView
+                        style="@style/LegalBulletTextSmall"
+                        android:text="File a complaint with the appropriate privacy regulator." />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/LegalBodySmall"
+                    android:text="To exercise these rights, contact RailTap using the contact information provided on this website." />
+            </LinearLayout>
+
+            <!-- 7 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="7. Third-Party Services" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap may rely on third-party platforms for database hosting, payment processing, or other application functions. RailTap does not control the independent privacy practices of these providers. Users should review the relevant policies of third-party services when applicable." />
+            </LinearLayout>
+
+            <!-- 8 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="8. Children's Privacy" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap is intended for individuals who can lawfully use its services. If the application collects personal information from children, the necessary safeguards, permissions, and legal requirements must be followed." />
+            </LinearLayout>
+
+            <!-- 9 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="9. Changes to This Privacy Policy" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="RailTap may update this Privacy Policy to reflect changes in its features, services, or legal obligations. Updated versions will be published on this page with a revised effective date when appropriate." />
+            </LinearLayout>
+
+            <!-- 10 -->
+            <LinearLayout style="@style/LegalSection">
+
+                <TextView
+                    style="@style/LegalSectionTitle"
+                    android:text="10. Contact Us" />
+
+                <TextView
+                    style="@style/LegalBodyDark"
+                    android:text="For privacy-related questions, requests, or concerns, please contact the RailTap team through the Contact Us section of this website." />
+            </LinearLayout>
+
+            <View style="@style/LegalDivider" />
+
+            <TextView
+                style="@style/LegalBodySmall"
+                android:layout_marginTop="16dp"
+                android:text="By using RailTap, you acknowledge that you have read this Privacy Policy."
+                android:textStyle="italic" />
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

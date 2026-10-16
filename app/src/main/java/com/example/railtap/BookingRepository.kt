@@ -1,29 +1,11 @@
 package com.example.railtap
 
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import java.math.BigDecimal
-
-// ---------------------------------------------------------------------------
-// If you already have a Supabase client object, delete this one and point
-// BookingRepository.client at yours. (Newer supabase-kt versions rename the
-// Auth import to io.github.jan.supabase.auth.Auth.)
-// ---------------------------------------------------------------------------
-object SupabaseProvider {
-    val client = createSupabaseClient(
-        supabaseUrl = "https://updwkxmylacxlocrssqk.supabase.co",
-        supabaseKey = "sb_publishable_30pXYndCG5wnGoG14UQPOw_vgIoXwLO"
-    ) {
-        install(Auth)
-        install(Postgrest)
-    }
-}
 
 // ---------- Models ----------
 
@@ -61,7 +43,7 @@ data class BookingResult(
 // ---------- Repository ----------
 
 class BookingRepository(
-    private val client: io.github.jan.supabase.SupabaseClient = SupabaseProvider.client
+    private val client: io.github.jan.supabase.SupabaseClient = SupabaseClient.client  // same client used for login
 ) {
 
     /** All stations of a line, ordered from first to last stop. */
