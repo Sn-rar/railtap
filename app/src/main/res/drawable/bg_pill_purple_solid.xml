@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LRT-2 pill: same shape as bg_pill_green (LRT-1), but purple with white text on top -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <corners android:radius="20dp" />
+    <solid android:color="@color/brand" />
+    <stroke
+        android:width="2dp"
+        android:color="#33705FBF" />
+</shape>

@@ -36,14 +36,16 @@ private data class TripTicket(
 
 data class TripHistoryStats(
     val totalTrips: Int = 0,
-    val frequentRoute: String = "No trips yet"
+    val frequentRoute: String = "No trips yet" // now holds the most used LINE, e.g. "LRT-2"
 )
 
 data class TripHistoryItem(
     val route: String,
     val line: String,
     val date: String,
-    val fare: String
+    val fare: String,
+    val origin: String = "",
+    val destination: String = ""
 )
 
 class TripHistoryRepository {
@@ -88,29 +90,20 @@ class TripHistoryRepository {
             tickets.addAll(transactionTickets)
         }
 
-        val stations = client.from("stations")
-            .select()
-            .decodeList<Station>()
-            .associateBy { it.stationId }
-
-        val frequentTicket = tickets
-            .groupingBy {
-                "${it.lineId}:${it.originId}:${it.destinationId}"
-            }
+        // Most used line this month: count each paid booking once (not once per passenger)
+        val frequentLineId = tickets
+            .distinctBy { it.transactionId }      // one ticket per booking is enough
+            .groupingBy { it.lineId }
             .eachCount()
             .maxByOrNull { it.value }
             ?.key
 
-        val frequentRoute = frequentTicket?.split(":")?.let { parts ->
-            val origin = stations[parts[1].toInt()]?.name
-            val destination = stations[parts[2].toInt()]?.name
-
-            if (origin != null && destination != null) {
-                "$origin → $destination"
-            } else {
-                "No route available"
-            }
-        } ?: "No trips yet"
+        val frequentRoute = when (frequentLineId) {
+            1 -> "LRT-1"
+            2 -> "LRT-2"
+            null -> "No trips yet"
+            else -> "Line $frequentLineId"
+        }
 
         return TripHistoryStats(
             totalTrips = transactions.size,
@@ -173,6 +166,7 @@ class TripHistoryRepository {
 
                 val formattedDate = try {
                     val inputFormats = listOf(
+                        "yyyy-MM-dd'T'HH:mm:ssXXX", // e.g. 2026-10-16T05:48:39+00:00
                         "yyyy-MM-dd'T'HH:mm:ss.SSSX",
                         "yyyy-MM-dd'T'HH:mm:ssX",
                         "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
@@ -191,7 +185,9 @@ class TripHistoryRepository {
                                 timeZone = TimeZone.getTimeZone("UTC")
                             }
 
-                            parsedDate = parser.parse(transaction.createdAt)
+                            // Remove the fraction of a second (".747733"), which SimpleDateFormat can't read
+                            val cleaned = transaction.createdAt.replace(Regex("\\.\\d+"), "")
+                            parsedDate = parser.parse(cleaned)
 
                             if (parsedDate != null) {
                                 break
@@ -218,7 +214,9 @@ class TripHistoryRepository {
                         route = "$origin → $destination",
                         line = lineName,
                         date = formattedDate,
-                        fare = formattedFare
+                        fare = formattedFare,
+                        origin = origin,
+                        destination = destination
                     )
                 )
             }

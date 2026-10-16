@@ -4,6 +4,7 @@ package com.example.railtap
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -29,8 +30,29 @@ class DashboardActivity : AppCompatActivity() {
 
         loadTripHistory()
 
+        // Profile picture circle (top right): tapping it opens the Account tab
+        findViewById<View>(R.id.avatarCircle).setOnClickListener {
+            findViewById<View>(R.id.navAccount).performClick() // same as tapping Account in the bottom bar
+        }
+
         findViewById<TextView>(R.id.showAllHistory).setOnClickListener {
             startActivity(Intent(this, TripHistoryActivity::class.java))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadProfilePicture()
+    }
+
+    /** Shows the user's profile picture (same as in Account) in the top-right circle. */
+    private fun loadProfilePicture() {
+        val avatar = findViewById<ImageView>(R.id.avatarCircle)
+
+        // Show the saved copy instantly, then refresh it from Supabase
+        ProfileAvatar.cached?.let { avatar.showProfilePicture(it) }
+        lifecycleScope.launch {
+            ProfileAvatar.load()?.let { avatar.showProfilePicture(it) }
         }
     }
 

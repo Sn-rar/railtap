@@ -159,6 +159,7 @@ class AccountActivity : AppCompatActivity() {
                     buildJsonObject { put("p_path", path) }
                 )
 
+                ProfileAvatar.cached = bitmap // so Home shows the new photo right away
                 toast("Profile photo updated")
             } catch (e: Exception) {
                 toast("Upload failed. Please try again.")
@@ -212,6 +213,7 @@ class AccountActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Logout") { _, _ ->
                 lifecycleScope.launch {
+                    ProfileAvatar.clear() // forget this user's photo
                     try {
                         SupabaseClient.client.auth.signOut()
                     } catch (e: Exception) {

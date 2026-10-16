@@ -57,8 +57,12 @@
             android:layout_width="@dimen/avatar_size"
             android:layout_height="@dimen/avatar_size"
             android:background="@drawable/bg_avatar"
-            android:contentDescription="Account"
+            android:contentDescription="Open account"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             android:padding="12dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_person"
             app:layout_constraintBottom_toBottomOf="@id/goingWhereText"
             app:layout_constraintEnd_toEndOf="parent"
@@ -165,7 +169,7 @@
 
                 </LinearLayout>
 
-                <!-- Frequent Route box -->
+                <!-- Frequent Line box -->
                 <LinearLayout
                     android:id="@+id/frequentRouteBox"
                     android:layout_width="0dp"
@@ -186,7 +190,7 @@
                         android:fontFamily="@font/plus_jakarta_sans_extrabold"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Frequent Route"
+                        android:text="Frequent Line"
                         android:textColor="#D8D4F0"
                         android:textSize="13sp" />
 
