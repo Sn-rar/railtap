@@ -39,9 +39,16 @@ class LinesMapView @JvmOverloads constructor(
 
     // space for the pills at the bottom
     var bottomInset = 0
-        set(value) { field = value; if (width > 0) resetView(false) }
+        set(value) { if (field == value) return; field = value; if (width > 0) resetView(false) }
 
     var drawLabels = true
+        set(value) { field = value; invalidate() }
+
+    // station tapped
+    var onStationTapped: ((MapStation) -> Unit)? = null
+
+    // picked stations to highlight
+    var highlighted: List<MapStation> = emptyList()
         set(value) { field = value; invalidate() }
 
     // ---------------------------------------------------------------- layers
@@ -81,9 +88,14 @@ class LinesMapView @JvmOverloads constructor(
         } else Color.BLACK
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textSize = 28f; color = textColor }
+    private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val lineColors = mapOf(
+        MapLine.LRT1 to ContextCompat.getColor(context, R.color.green_line),
+        MapLine.LRT2 to ContextCompat.getColor(context, R.color.brand)
+    )
 
     // ---------------------------------------------------------------- dim animation
-    private val lineAlpha = floatArrayOf(1f, 1f)           // index = MapLine.ordinal
+    private val lineAlpha = floatArrayOf(1f, 1f)
     private var dimAnimator: ValueAnimator? = null
 
     private fun animateDim() {
@@ -118,10 +130,10 @@ class LinesMapView @JvmOverloads constructor(
             canvas.scale(labelScale, labelScale)
             for (s in LinesMapData.stations) {
                 labelPaint.alpha = (255 * lineAlpha[s.line.ordinal] * (if (s.isOpen) 1f else 0.6f)).toInt()
-                if (s.labelMode == 0) {                       // beside a mostly vertical track
+                if (s.labelMode == 0) { // vertical track
                     labelPaint.textAlign = Paint.Align.RIGHT
                     canvas.drawText(s.name, s.x - 24f, s.y + 10f, labelPaint)
-                } else {                                      // above a mostly horizontal track
+                } else { // horizontal track
                     labelPaint.textAlign = Paint.Align.LEFT
                     canvas.save()
                     canvas.translate(s.x - 6f, s.y - 24f)
@@ -129,6 +141,16 @@ class LinesMapView @JvmOverloads constructor(
                     canvas.drawText(s.name, 0f, 0f, labelPaint)
                     canvas.restore()
                 }
+            }
+            canvas.restore()
+        }
+
+        if (highlighted.isNotEmpty()) {
+            canvas.save()
+            canvas.scale(labelScale, labelScale)
+            for (st in highlighted) {
+                fillPaint.color = lineColors.getValue(st.line)
+                canvas.drawRect(st.x - 6.5f, st.y - 6.5f, st.x + 6.5f, st.y + 6.5f, fillPaint)
             }
             canvas.restore()
         }
@@ -141,7 +163,14 @@ class LinesMapView @JvmOverloads constructor(
     private val values = FloatArray(9)
     private var fitScale = 1f
     private var animator: ValueAnimator? = null
-    private val maxZoom = 8f
+
+    // zoom limits (1.0 = whole map fits)
+    private val minZoomFactor = 2f
+    private val maxZoomFactor = 6f
+    private val defaultZoom = 4f // starting zoom
+
+    private fun minScale() = fitScale * minZoomFactor
+    private fun maxScale() = fitScale * maxZoomFactor
 
     private fun currentScale(): Float { mapMatrix.getValues(values); return values[Matrix.MSCALE_X] }
     private fun viewH() = (height - bottomInset).toFloat()
@@ -162,15 +191,35 @@ class LinesMapView @JvmOverloads constructor(
         resetView(false)
     }
 
+    private fun contentBounds(): RectF =
+        RectF(lineBounds(MapLine.LRT1)).apply { union(lineBounds(MapLine.LRT2)) }
+
     fun resetView(animate: Boolean = true) {
         fitScale = min(width / mapW, viewH() / mapH)
-        fitRect(RectF(0f, 0f, mapW, mapH), animate, 0f)
+        val f = defaultFocus()
+        val s = (fitScale * defaultZoom).coerceIn(minScale(), maxScale())
+        val target = Matrix().apply {
+            postScale(s, s)
+            postTranslate(width / 2f - f.x * s, viewH() / 2f - f.y * s)
+        }
+        animateTo(target, animate)
+    }
+
+    // where the map centers on reset
+    private fun defaultFocus(): PointF {
+        // center on a station
+        val st = LinesMapData.stations.first { it.name == "Doroteo Jose" }
+        return PointF(st.x * labelScale, st.y * labelScale)
+
+        // or a spot (0-1 fractions)
+        // val c = contentBounds()
+        // return PointF(c.left + c.width() * 0.35f, c.top + c.height() * 0.30f)
     }
 
     // zoom so r fills the screen
     fun fitRect(r: RectF, animate: Boolean = true, padPx: Float = 40f * density) {
         val s = min((width - 2 * padPx) / r.width(), (viewH() - 2 * padPx) / r.height())
-            .coerceIn(fitScale, fitScale * maxZoom)
+            .coerceIn(minScale(), maxScale())
         val target = Matrix().apply {
             postScale(s, s)
             postTranslate(width / 2f - r.centerX() * s, viewH() / 2f - r.centerY() * s)
@@ -243,6 +292,18 @@ class LinesMapView @JvmOverloads constructor(
         return if (best <= rr) best else null
     }
 
+    // closest station near the tap (~28dp)
+    private fun stationAt(px: Float, py: Float): MapStation? {
+        mapMatrix.invert(inverse)
+        val p = floatArrayOf(px, py); inverse.mapPoints(p)
+        val maxDist = 28f * density / currentScale()
+        return LinesMapData.stations
+            .filter { it.isOpen }
+            .map { it to hypot(p[0] - it.x * labelScale, p[1] - it.y * labelScale) }
+            .filter { it.second <= maxDist }
+            .minByOrNull { it.second }?.first
+    }
+
     private fun lineAt(px: Float, py: Float): MapLine? {
         mapMatrix.invert(inverse)
         val p = floatArrayOf(px, py); inverse.mapPoints(p)
@@ -258,7 +319,7 @@ class LinesMapView @JvmOverloads constructor(
             override fun onScale(d: ScaleGestureDetector): Boolean {
                 animator?.cancel()
                 val cur = currentScale()
-                val f = (cur * d.scaleFactor).coerceIn(fitScale, fitScale * maxZoom) / cur
+                val f = (cur * d.scaleFactor).coerceIn(minScale(), maxScale()) / cur
                 mapMatrix.postScale(f, f, d.focusX, d.focusY)
                 clamp(); invalidate(); return true
             }
@@ -272,13 +333,17 @@ class LinesMapView @JvmOverloads constructor(
             mapMatrix.postTranslate(-dx, -dy); clamp(); invalidate(); return true
         }
         override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            val station = stationAt(e.x, e.y)
+            if (station != null) { onStationTapped?.invoke(station); performClick(); return true }
             val hit = lineAt(e.x, e.y)
             selectedLine = if (hit == null || hit == selectedLine) null else hit
             performClick(); return true
         }
         override fun onDoubleTap(e: MotionEvent): Boolean {
             val cur = currentScale()
-            val f = if (cur < fitScale * 2f) 2.5f else fitScale / cur
+            val target = if (cur < maxScale() * 0.6f) (cur * 2.5f).coerceAtMost(maxScale())
+            else (fitScale * defaultZoom).coerceIn(minScale(), maxScale())
+            val f = target / cur
             animateTo(Matrix(mapMatrix).apply { postScale(f, f, e.x, e.y) }, true)
             return true
         }

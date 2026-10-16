@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="travel_origin">Origin</string>
+    <string name="travel_destination">Destination</string>
+    <string name="travel_hint">Click two stations from the map to view their estimate travel time.</string>
+    <string name="travel_pick_second">Now tap a second station on the same line.</string>
+    <string name="travel_avg_time">Average Travel Time</string>
+</resources>
