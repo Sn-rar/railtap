@@ -1,0 +1,8 @@
+<resources>
+    <declare-styleable name="LinesMapView">
+        <attr name="baseDrawable" format="reference" />
+        <attr name="lrt1Drawable" format="reference" />
+        <attr name="lrt2Drawable" format="reference" />
+        <attr name="drawLabels" format="boolean" />
+    </declare-styleable>
+</resources>

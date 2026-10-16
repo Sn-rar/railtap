@@ -30,9 +30,8 @@ fun setupBottomNav(activity: Activity, current: NavTab) {
     activity.findViewById<View>(R.id.navTickets).setOnClickListener {
         openTab(activity, current, NavTab.TICKETS, TicketsActivity::class.java)
     }
-    // No Lines screen yet, so just show a message for now
     activity.findViewById<View>(R.id.navLines).setOnClickListener {
-        if (current != NavTab.LINES) comingSoon(activity, "Lines")
+        openTab(activity, current, NavTab.LINES, LinesActivity::class.java)
     }
     activity.findViewById<View>(R.id.navAccount).setOnClickListener {
         openTab(activity, current, NavTab.ACCOUNT, AccountActivity::class.java)

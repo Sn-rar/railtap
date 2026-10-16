@@ -94,5 +94,9 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LinesActivity"
+            android:exported="false" />
+
     </application>
 </manifest>
