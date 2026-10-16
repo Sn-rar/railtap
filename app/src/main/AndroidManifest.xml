@@ -35,6 +35,11 @@
             android:name=".TicketsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".TripHistoryActivity"
+            android:exported="false" />
+
+
         <!-- PayPal sends the user back here via railtap://paypal/return or /cancel -->
         <activity
             android:name=".BookingActivity"
